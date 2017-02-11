@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.minSdkVersion
+
+        consumerProguardFiles 'proguard-rules.pro'
+    }
+}
+
+task copyDebugTestResources(type: Copy) {
+    from "${projectDir}/src/test/resources"
+    into "${buildDir}/intermediates/sourceFolderJavaResources/test/debug"
+}
+
+task copyReleaseTestResources(type: Copy) {
+    from "${projectDir}/src/test/resources"
+    into "${buildDir}/intermediates/sourceFolderJavaResources/test/release"
+}
+copyDebugTestResources.dependsOn copyReleaseTestResources
+preBuild.dependsOn copyDebugTestResources
+
+dependencies {
+    compile project(':shortbread-annotations')
+    compile "com.android.support:support-annotations:$supportLibraryVersion"
+    testCompile 'junit:junit:4.12'
+    testCompile 'com.google.truth:truth:0.31'
+    testCompile 'com.google.testing.compile:compile-testing:0.9'
+    testCompile project(':shortbread-compiler')
+    testCompile files(getRuntimeJar())
+    //noinspection UnnecessaryQualifiedReference
+    testCompile files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
+}
+
+ext {
+    libraryDescription = 'Android library that generates app shortcuts for activities and methods'
+}
+
+static def getRuntimeJar() {
+    try {
+        final File javaBase = new File(System.getProperty("java.home")).getCanonicalFile();
+        File runtimeJar = new File(javaBase, "lib/rt.jar");
+        if (runtimeJar.exists()) {
+            return runtimeJar;
+        }
+        runtimeJar = new File(javaBase, "jre/lib/rt.jar");
+        return runtimeJar.exists() ? runtimeJar : null;
+    } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
+}
+
+apply from: '../install.gradle'
+apply from: '../bintray.gradle'

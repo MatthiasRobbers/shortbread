@@ -1,0 +1,37 @@
+apply plugin: 'com.github.dcendents.android-maven'
+
+group = "com.github.matthiasrobbers"
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                version libraryVersion
+
+                name project.name
+                description = libraryDescription
+                url githubUrl
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'matthiasrobbers'
+                        name 'Matthias Robbers'
+                        email 'matthias.robbers@gmail.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url githubUrl
+                }
+            }
+        }
+    }
+}

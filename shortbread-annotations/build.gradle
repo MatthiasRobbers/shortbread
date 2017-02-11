@@ -1,0 +1,28 @@
+import com.android.build.gradle.internal.LoggerWrapper
+import com.android.build.gradle.internal.SdkHandler
+
+apply plugin: 'java'
+
+//noinspection GroovyUnusedAssignment
+sourceCompatibility = sourceCompatibilityVersion
+//noinspection GroovyUnusedAssignment
+targetCompatibility = targetCompatibilityVersion
+
+def logger = new LoggerWrapper(project.logger)
+def sdkHandler = new SdkHandler(project, logger)
+for (File file : sdkHandler.sdkLoader.repositories) {
+    repositories.maven {
+        url = file.toURI()
+    }
+}
+
+dependencies {
+    compile "com.android.support:support-annotations:$supportLibraryVersion"
+}
+
+ext {
+    libraryDescription = 'Annotations for shortbread'
+}
+
+apply from: '../install.gradle'
+apply from: '../bintray.gradle'
