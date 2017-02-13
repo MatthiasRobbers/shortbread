@@ -59,9 +59,12 @@ Shortcuts can be customized with attributes, just like using the framework API.
     id = "books", 
     icon = R.drawable.ic_shortcut_books, 
     shortLabel = "Books",
+    shortLabelRes = R.string.shortcut_books_short_label,
     longLabel = "List of books",
+    longLabelRes = R.string.shortcut_books_long_label,
     rank = 2, // order in list, relative to other shortcuts
     disabledMessage = "No books are available",
+    disabledMessageRes = R.string.shortcut_books_disabled_message,
     enabled = true, // default
     backStack = {MainActivity.class, LibraryActivity.class},
     activity = MainActivity.class, // the launcher activity to which the shortcut should be attached
