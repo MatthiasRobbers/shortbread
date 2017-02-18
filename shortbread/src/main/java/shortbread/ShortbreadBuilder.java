@@ -8,32 +8,15 @@ import java.util.List;
 
 public class ShortbreadBuilder {
 
-    private Context context;
-    private List<ShortcutInfo> allShortcuts = new ArrayList<>();
-    private boolean[] shortcutStatus;
+    Context context;
+    List<ShortcutInfo> allShortcuts = new ArrayList<>();
+    boolean[] shortcutStatus;
 
-    ShortbreadBuilder(Context context, List<ShortcutInfo> allShortcuts) {
+    ShortbreadBuilder(Context context, List<ShortcutInfo> allShortcuts, boolean[] shortcutStatus) {
 
         this.allShortcuts = allShortcuts;
-        this.shortcutStatus = new boolean[allShortcuts.size()];
-        // enable all shortcuts by default
-        for (int i = 0; i < shortcutStatus.length; i++) {
-            shortcutStatus[i] = true;
-        }
-
+        this.shortcutStatus = shortcutStatus;
         this.context = context;
-    }
-
-    /**
-     * Disable all available app shortcuts.
-     *
-     * @return shortbread builder.
-     */
-    public ShortbreadBuilder disableAll() {
-        for (int i = 0; i < shortcutStatus.length; i++) {
-            shortcutStatus[i] = false;
-        }
-        return this;
     }
 
     /**
@@ -48,6 +31,9 @@ public class ShortbreadBuilder {
         return this;
     }
 
+    /**
+     * Build the shortcuts
+     */
     public void build() {
         Creator.create(context, allShortcuts, shortcutStatus);
     }

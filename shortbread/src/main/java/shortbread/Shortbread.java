@@ -15,14 +15,19 @@ public final class Shortbread {
 
     @TargetApi(25)
     @NonNull
-    public static ShortbreadBuilder generate(Context context) {
+    public static ShortbreadInitialBuilder generate(Context context) {
         final Object returnValue;
 
         try {
             generated = Class.forName("shortbread.ShortbreadGenerated");
             Method createShortcuts = generated.getMethod("createShortcuts", Context.class);
             returnValue = createShortcuts.invoke(generated, context);
-            return new ShortbreadBuilder(context, (List<ShortcutInfo>) returnValue);
+            boolean[] shortcutStatus = new boolean[((List<ShortcutInfo>) returnValue).size()];
+            // enable all shortcuts by default
+            for (int i = 0; i < shortcutStatus.length; i++) {
+                shortcutStatus[i] = true;
+            }
+            return new ShortbreadInitialBuilder(context, (List<ShortcutInfo>) returnValue, shortcutStatus);
 
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
