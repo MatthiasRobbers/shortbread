@@ -10,7 +10,7 @@ import com.example.shortbread.books.BooksActivity;
 
 import shortbread.Shortcut;
 
-@Shortcut(id = "movies", action = "movie_shortcut", icon = R.drawable.ic_shortcut_movies, rank = 3,
+@Shortcut(id = R.id.movies, action = "movie_shortcut", icon = R.drawable.ic_shortcut_movies, rank = 3,
         backStack = {MainActivity.class, BooksActivity.class})
 public class MoviesActivity extends Activity {
 
@@ -20,7 +20,7 @@ public class MoviesActivity extends Activity {
         setContentView(R.layout.activity_movies);
     }
 
-    @Shortcut(id = "add_movie", icon = R.drawable.ic_shortcut_add, shortLabel = "Add movie", rank = 4, disabledMessageRes = R.string.label_books)
+    @Shortcut(id = R.id.add_movies, icon = R.drawable.ic_shortcut_add, shortLabel = "Add movie", rank = 4, disabledMessageRes = R.string.label_books)
     public void addMovie() {
         Toast.makeText(this, "Add movie", Toast.LENGTH_SHORT).show();
     }

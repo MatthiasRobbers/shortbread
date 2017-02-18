@@ -8,7 +8,7 @@ import com.example.shortbread.R;
 
 import shortbread.Shortcut;
 
-@Shortcut(id = "books", icon = R.drawable.ic_shortcut_books, shortLabelRes = R.string.label_books, rank = 1)
+@Shortcut(id = R.id.books, icon = R.drawable.ic_shortcut_books, shortLabelRes = R.string.label_books, rank = 1)
 public class BooksActivity extends Activity {
 
     @Override
@@ -17,7 +17,7 @@ public class BooksActivity extends Activity {
         setContentView(R.layout.activity_books);
     }
 
-    @Shortcut(id = "favorite_books", icon = R.drawable.ic_shortcut_favorite, shortLabel = "Favorite books", rank = 2,
+    @Shortcut(id = R.id.favorite_books, icon = R.drawable.ic_shortcut_favorite, shortLabel = "Favorite books", rank = 2,
             disabledMessage = "You have no favorite books")
     public void showFavoriteBooks() {
         Toast.makeText(this, "Favorite books", Toast.LENGTH_SHORT).show();

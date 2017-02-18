@@ -11,7 +11,6 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,6 @@ class CodeGenerator {
     private final ClassName componentName = ClassName.get("android.content", "ComponentName");
     private final ClassName list = ClassName.get("java.util", "List");
     private final TypeName listOfShortcutInfo = ParameterizedTypeName.get(list, shortcutInfo);
-    private final TypeName listOfListOfShortcutInfo = ParameterizedTypeName.get(list, listOfShortcutInfo);
     private final ClassName taskStackBuilder = ClassName.get("android.app", "TaskStackBuilder");
     private final ClassName shortcutUtils = ClassName.get("shortbread", "ShortcutUtils");
 
@@ -75,10 +73,9 @@ class CodeGenerator {
     private MethodSpec createShortcuts() {
         final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("createShortcuts")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(listOfListOfShortcutInfo)
+                .returns(listOfShortcutInfo)
                 .addParameter(context, "context")
-                .addStatement("$T<$T> enabledShortcuts = new $T<>()", List.class, shortcutInfo, ArrayList.class)
-                .addStatement("$T<$T> disabledShortcuts = new $T<>()", List.class, shortcutInfo, ArrayList.class);
+                .addStatement("$T<$T> enabledShortcuts = new $T<>()", List.class, shortcutInfo, ArrayList.class);
 
         for (final ShortcutAnnotatedElement annotatedElement : annotatedElements) {
             Shortcut shortcut = annotatedElement.getShortcut();
@@ -88,7 +85,7 @@ class CodeGenerator {
         }
 
         return methodBuilder
-                .addStatement("return $T.asList(enabledShortcuts, disabledShortcuts)", Arrays.class)
+                .addStatement("return enabledShortcuts")
                 .build();
     }
 
