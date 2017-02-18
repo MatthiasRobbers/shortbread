@@ -10,6 +10,18 @@ public class SampleApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        Shortbread.create(this);
+        // white listed
+        Shortbread.generate(this)
+                .disableAll()
+                .setEnabled(R.id.books, true)
+                .setEnabled(R.id.favorite_books, true)
+                .build();
+
+        // black listed
+//        Shortbread.generate(this)
+//                .setEnabled(R.id.books, false)
+//                .setEnabled(R.id.favorite_books, false)
+//                .build();
+
     }
 }

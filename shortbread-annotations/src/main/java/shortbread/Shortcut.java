@@ -1,6 +1,7 @@
 package shortbread;
 
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IdRes;
 import android.support.annotation.IntRange;
 import android.support.annotation.StringRes;
 
@@ -10,7 +11,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Shortcut {
 
-    String id();
+    @IdRes
+    int id();
 
     String shortLabel() default "";
 

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="movies" type="id" />
+    <item name="add_movies" type="id" />
+    <item name="books" type="id" />
+    <item name="favorite_books" type="id" />
+</resources>
