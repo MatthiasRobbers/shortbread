@@ -9,6 +9,7 @@ import android.content.pm.ShortcutManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,20 +30,19 @@ public final class Shortbread {
             return;
         }
 
-        Context applicationContext = context.getApplicationContext();
-
         if (generated == null) {
-            //noinspection TryWithIdenticalCatches
             try {
                 generated = Class.forName("shortbread.ShortbreadGenerated");
                 createShortcuts = generated.getMethod("createShortcuts", Context.class);
                 callMethodShortcut = generated.getMethod("callMethodShortcut", Activity.class);
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                Log.i(Shortbread.class.getSimpleName(), "No shortcuts found");
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
         }
+
+        Context applicationContext = context.getApplicationContext();
 
         if (!shortcutsSet) {
             setShortcuts(applicationContext);
@@ -61,24 +61,29 @@ public final class Shortbread {
     private static void setShortcuts(Context context) {
         ShortcutManager shortcutManager = context.getSystemService(ShortcutManager.class);
 
-        //noinspection TryWithIdenticalCatches
-        try {
-            final Object returnValue = createShortcuts.invoke(generated, context);
-            @SuppressWarnings("unchecked")
-            List<List<ShortcutInfo>> shortcuts = (List<List<ShortcutInfo>>) returnValue;
-            List<ShortcutInfo> enabledShortcuts = shortcuts.get(0);
-            List<String> disabledShortcutsIds = new ArrayList<>();
-            for (final ShortcutInfo shortcutInfo : shortcuts.get(1)) {
-                disabledShortcutsIds.add(shortcutInfo.getId());
+        if (createShortcuts == null) {
+            shortcutManager.removeAllDynamicShortcuts();
+        } else {
+            //noinspection TryWithIdenticalCatches
+            try {
+                final Object returnValue = createShortcuts.invoke(generated, context);
+                @SuppressWarnings("unchecked")
+                List<List<ShortcutInfo>> shortcuts = (List<List<ShortcutInfo>>) returnValue;
+                List<ShortcutInfo> enabledShortcuts = shortcuts.get(0);
+                List<String> disabledShortcutsIds = new ArrayList<>();
+                for (final ShortcutInfo shortcutInfo : shortcuts.get(1)) {
+                    disabledShortcutsIds.add(shortcutInfo.getId());
+                }
+                shortcutManager.disableShortcuts(disabledShortcutsIds);
+                shortcutManager.setDynamicShortcuts(enabledShortcuts);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
             }
-            shortcutManager.disableShortcuts(disabledShortcutsIds);
-            shortcutManager.setDynamicShortcuts(enabledShortcuts);
-            shortcutsSet = true;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
         }
+
+        shortcutsSet = true;
     }
 
     @RequiresApi(14)
@@ -95,6 +100,10 @@ public final class Shortbread {
     }
 
     private static void callMethodShortcut(Activity activity) {
+        if (callMethodShortcut == null) {
+            return;
+        }
+
         //noinspection TryWithIdenticalCatches
         try {
             callMethodShortcut.invoke(generated, activity);

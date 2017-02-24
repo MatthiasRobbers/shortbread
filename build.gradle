@@ -30,5 +30,5 @@ ext {
 
     githubUrl = 'https://github.com/matthiasrobbers/shortbread'
     gitUrl = 'https://github.com/matthiasrobbers/shortbread.git'
-    libraryVersion = '1.0.0'
+    libraryVersion = '1.0.1'
 }
