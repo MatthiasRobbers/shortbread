@@ -9,6 +9,7 @@ import android.content.pm.ShortcutManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,14 +17,26 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Creates app shortcuts from {@link Shortcut} annotations, {@link #create(Context)} is all that needs to be called.
+ */
 public final class Shortbread {
 
     private static Class<?> generated;
     private static Method createShortcuts;
     private static Method callMethodShortcut;
-    private static boolean shortcutsSet;
-    private static boolean activityLifecycleCallbacksSet;
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    static boolean shortcutsSet;
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    static boolean activityLifecycleCallbacksSet;
 
+    /**
+     * Publishes the shortcuts created from activity class annotations and activity method annotations in the project.
+     * It will also set an activity lifecycle listener to call an annotated activity method when an activity is started
+     * with a method shortcut.
+     *
+     * @param context Any context, the implementation will use the application context.
+     */
     @TargetApi(25)
     public static void create(Context context) {
         if (Build.VERSION.SDK_INT < 25) {

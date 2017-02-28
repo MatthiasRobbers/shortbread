@@ -13,9 +13,8 @@ The four shortcuts above are produced by the following code:
 @Shortcut(id = "movies", icon = R.drawable.ic_shortcut_movies, shortLabel = "Movies")
 public class MoviesActivity extends Activity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) { /* code to display list of movies */ }
-
+    // ...
+    
     @Shortcut(id = "add_movie", icon = R.drawable.ic_shortcut_add, shortLabel = "Add movie")
     public void addMovie() {
         // code to add movie, could show an AddMovieDialogFragment for example 
@@ -27,9 +26,8 @@ public class MoviesActivity extends Activity {
 @Shortcut(id = "books", icon = R.drawable.ic_shortcut_books, shortLabel = "Books")
 public class BooksActivity extends Activity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) { /* code to display list of books */ }
-
+    // ...
+    
     @Shortcut(id = "favorite_books", icon = R.drawable.ic_shortcut_favorite, shortLabel = "Favorite books")
     public void showFavoriteBooks() {
         // code to display favorite books, could show a FavoriteBooksFragment for example 
@@ -70,7 +68,7 @@ Shortcuts can be customized with attributes, just like using the framework API.
     activity = MainActivity.class, // the launcher activity to which the shortcut should be attached
     action = "shortcut_books" // intent action to identify the shortcut from the launched activity
 )
-public class BooksActivity extends Activity { /*...*/ };
+public class BooksActivity extends Activity { /*...*/ }
 ```
 Download
 --------
