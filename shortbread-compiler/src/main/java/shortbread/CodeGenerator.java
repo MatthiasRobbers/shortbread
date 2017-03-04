@@ -210,7 +210,7 @@ class CodeGenerator {
             List<String> methodNames = annotatedMethodName.getValue();
             methodBuilder.beginControlFlow("if (activity instanceof $T)", activityClassName);
             for (final String methodName : methodNames) {
-                methodBuilder.beginControlFlow("if (activity.getIntent().getStringExtra($S).equals($S))", EXTRA_METHOD, methodName);
+                methodBuilder.beginControlFlow("if ($S.equals(activity.getIntent().getStringExtra($S)))", methodName, EXTRA_METHOD);
                 methodBuilder.addStatement("(($T) activity).$L()", activityClassName, methodName);
                 methodBuilder.endControlFlow();
             }

@@ -44,10 +44,10 @@ public final class ShortbreadGenerated {
 
     public static void callMethodShortcut(Activity activity) {
         if (activity instanceof TwoMethodShortcutsActivity) {
-            if (activity.getIntent().getStringExtra("shortbread_method").equals("shortcutMethod1")) {
+            if ("shortcutMethod1".equals(activity.getIntent().getStringExtra("shortbread_method"))) {
                 ((TwoMethodShortcutsActivity) activity).shortcutMethod1();
             }
-            if (activity.getIntent().getStringExtra("shortbread_method").equals("shortcutMethod2")) {
+            if ("shortcutMethod2".equals(activity.getIntent().getStringExtra("shortbread_method"))) {
                 ((TwoMethodShortcutsActivity) activity).shortcutMethod2();
             }
         }
