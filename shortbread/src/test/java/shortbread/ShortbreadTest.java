@@ -3,6 +3,7 @@ package shortbread;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
+import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 
@@ -18,6 +19,7 @@ import org.robolectric.annotation.Config;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -35,6 +37,8 @@ public class ShortbreadTest {
     private Application application;
     @Mock
     private ShortcutManager shortcutManager;
+    @Mock
+    private Intent intent;
 
     @Before
     public void setUp() {
@@ -43,7 +47,9 @@ public class ShortbreadTest {
 
         MockitoAnnotations.initMocks(this);
         when(activity.getApplicationContext()).thenReturn(application);
+        when(application.getApplicationContext()).thenReturn(application);
         when(application.getSystemService(ShortcutManager.class)).thenReturn(shortcutManager);
+        when(activity.getIntent()).thenReturn(intent);
     }
 
     @Test
@@ -96,15 +102,27 @@ public class ShortbreadTest {
     }
 
     @Test
-    public void callsMethodShortcut() {
+    public void intentHasExtra_callsMethodShortcut() {
+        when(intent.hasExtra("shortbread_method")).thenReturn(true);
         ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut = null;
+
         Shortbread.create(activity);
         assertEquals(activity, ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut);
     }
 
     @Test
-    public void activityLifecycleListenerCallsMethodShortcut() {
+    public void intentDoesNotHaveExtra_doesNotCallMethodShortcut() {
+        when(intent.hasExtra("shortbread_method")).thenReturn(false);
+        ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut = null;
+
         Shortbread.create(activity);
+        assertNull(ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut);
+    }
+
+    @Test
+    public void activityLifecycleListenerCallsMethodShortcut() {
+        when(intent.hasExtra("shortbread_method")).thenReturn(true);
+        Shortbread.create(application);
         ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut = null;
 
         ArgumentCaptor<Application.ActivityLifecycleCallbacks> captor = ArgumentCaptor.forClass(

@@ -34,7 +34,7 @@ public final class ShortbreadGenerated {
 
     public static void callMethodShortcut(Activity activity) {
         if (activity instanceof MethodShortcutActivity) {
-            if (activity.getIntent().getStringExtra("shortbread_method").equals("shortcutMethod")) {
+            if ("shortcutMethod".equals(activity.getIntent().getStringExtra("shortbread_method"))) {
                 ((MethodShortcutActivity) activity).shortcutMethod();
             }
         }

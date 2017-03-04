@@ -113,7 +113,7 @@ public final class Shortbread {
     }
 
     private static void callMethodShortcut(Activity activity) {
-        if (callMethodShortcut == null) {
+        if (callMethodShortcut == null || !activity.getIntent().hasExtra("shortbread_method")) {
             return;
         }
 
