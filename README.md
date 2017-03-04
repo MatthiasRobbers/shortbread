@@ -75,8 +75,8 @@ Download
 
 ```groovy
 dependencies {
-    compile 'com.github.matthiasrobbers:shortbread:1.0.0'
-    annotationProcessor 'com.github.matthiasrobbers:shortbread-compiler:1.0.0'
+    compile 'com.github.matthiasrobbers:shortbread:1.0.1'
+    annotationProcessor 'com.github.matthiasrobbers:shortbread-compiler:1.0.1'
 }
 ```
 

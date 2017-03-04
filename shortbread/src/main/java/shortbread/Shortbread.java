@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Creates app shortcuts from {@link Shortcut} annotations, {@link #create(Context)} is all that needs to be called.
+ * Creates app shortcuts from {@code @Shortcut} annotations, {@link #create(Context)} is all that needs to be called.
  */
 public final class Shortbread {
 
