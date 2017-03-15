@@ -8,6 +8,7 @@ import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.VisibleForTesting;
 import android.util.Log;
@@ -38,7 +39,7 @@ public final class Shortbread {
      * @param context Any context, the implementation will use the application context.
      */
     @TargetApi(25)
-    public static void create(Context context) {
+    public static void create(@NonNull Context context) {
         if (Build.VERSION.SDK_INT < 25) {
             return;
         }
@@ -71,7 +72,7 @@ public final class Shortbread {
     }
 
     @RequiresApi(25)
-    private static void setShortcuts(Context context) {
+    private static void setShortcuts(@NonNull Context context) {
         ShortcutManager shortcutManager = context.getSystemService(ShortcutManager.class);
 
         if (createShortcuts == null) {
@@ -100,7 +101,7 @@ public final class Shortbread {
     }
 
     @RequiresApi(14)
-    private static void setActivityLifecycleCallbacks(Context applicationContext) {
+    private static void setActivityLifecycleCallbacks(@NonNull Context applicationContext) {
         ((Application) applicationContext).registerActivityLifecycleCallbacks(new SimpleActivityLifecycleCallbacks() {
 
             @Override
@@ -112,7 +113,7 @@ public final class Shortbread {
         activityLifecycleCallbacksSet = true;
     }
 
-    private static void callMethodShortcut(Activity activity) {
+    private static void callMethodShortcut(@NonNull Activity activity) {
         if (callMethodShortcut == null || !activity.getIntent().hasExtra("shortbread_method")) {
             return;
         }
