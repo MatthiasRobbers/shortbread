@@ -1,5 +1,6 @@
 package shortbread;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
@@ -22,6 +23,8 @@ import java.util.List;
  */
 public final class Shortbread {
 
+    @SuppressLint("StaticFieldLeak")
+    private static Context context;
     private static Class<?> generated;
     private static Method createShortcuts;
     private static Method callMethodShortcut;
@@ -56,6 +59,7 @@ public final class Shortbread {
         }
 
         Context applicationContext = context.getApplicationContext();
+        Shortbread.context = applicationContext;
 
         if (!shortcutsSet) {
             setShortcuts(applicationContext);
@@ -68,6 +72,11 @@ public final class Shortbread {
         if (context instanceof Activity) {
             callMethodShortcut((Activity) context);
         }
+    }
+
+    @RequiresApi(25) // TODO fix
+    public static ShortcutEditor getShortcut(String id) {
+        return new ShortcutEditor(context, id);
     }
 
     @RequiresApi(25)

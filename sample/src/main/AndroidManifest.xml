@@ -21,7 +21,8 @@
 
         <activity
             android:name="com.example.shortbread.movies.MoviesActivity"
-            android:label="Movies"/>
+            android:label="Movies"
+            android:exported="true"/>
 
         <activity
             android:name="com.example.shortbread.books.BooksActivity"
