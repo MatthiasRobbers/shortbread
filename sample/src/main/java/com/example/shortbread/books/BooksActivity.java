@@ -2,7 +2,7 @@ package com.example.shortbread.books;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.example.shortbread.R;
 
@@ -20,6 +20,6 @@ public class BooksActivity extends Activity {
     @Shortcut(id = "favorite_books", icon = R.drawable.ic_shortcut_favorite, shortLabel = "Favorite books", rank = 2,
             disabledMessage = "You have no favorite books")
     public void showFavoriteBooks() {
-        Toast.makeText(this, "Favorite books", Toast.LENGTH_SHORT).show();
+        ((TextView) findViewById(R.id.text)).setText("Favorite books");
     }
 }

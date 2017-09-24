@@ -104,9 +104,19 @@ public final class Shortbread {
     private static void setActivityLifecycleCallbacks(@NonNull Context applicationContext) {
         ((Application) applicationContext).registerActivityLifecycleCallbacks(new SimpleActivityLifecycleCallbacks() {
 
+            private Class<? extends Activity> createdActivityClass;
+
             @Override
-            public void onActivityCreated(final Activity activity, final Bundle savedInstanceState) {
-                callMethodShortcut(activity);
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                createdActivityClass = activity.getClass();
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+                if (activity.getClass() == createdActivityClass) {
+                    callMethodShortcut(activity);
+                    createdActivityClass = null;
+                }
             }
         });
 
