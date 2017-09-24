@@ -25,6 +25,6 @@
 
         <activity
             android:name="com.example.shortbread.books.BooksActivity"
-            android:parentActivityName=".movies.MoviesActivity"/>
+            android:parentActivityName=".MainActivity"/>
     </application>
 </manifest>

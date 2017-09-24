@@ -129,7 +129,15 @@ public class ShortbreadTest {
                 Application.ActivityLifecycleCallbacks.class);
         verify(application).registerActivityLifecycleCallbacks(captor.capture());
         Application.ActivityLifecycleCallbacks activityLifecycleCallbacks = captor.getValue();
+
         activityLifecycleCallbacks.onActivityCreated(activity, null);
+        assertNull(ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut);
+
+        activityLifecycleCallbacks.onActivityStarted(activity);
         assertEquals(activity, ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut);
+
+        ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut = null;
+        activityLifecycleCallbacks.onActivityStarted(activity);
+        assertNull(ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut);
     }
 }
