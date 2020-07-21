@@ -2,6 +2,8 @@ package shortbread;
 
 import com.google.auto.service.AutoService;
 
+import net.ltgt.gradle.incap.IncrementalAnnotationProcessor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -10,7 +12,6 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -22,8 +23,10 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 
+import static net.ltgt.gradle.incap.IncrementalAnnotationProcessorType.AGGREGATING;
+
 @AutoService(Processor.class)
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
+@IncrementalAnnotationProcessor(AGGREGATING)
 @SupportedAnnotationTypes({"shortbread.Shortcut"})
 public class ShortcutProcessor extends AbstractProcessor {
 
@@ -76,6 +79,11 @@ public class ShortcutProcessor extends AbstractProcessor {
 
         new CodeGenerator(processingEnv.getFiler(), annotatedElements).generate();
         return false;
+    }
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latestSupported();
     }
 
     private void error(Element element, String message, Object... args) {

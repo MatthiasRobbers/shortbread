@@ -1,13 +1,13 @@
 package shortbread;
 
-import com.google.testing.compile.JavaFileObjects;
-
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
 import javax.tools.JavaFileObject;
+
+import shortbread.util.JavaFileObjectsPatched;
 
 import static com.google.common.truth.Truth.assertAbout;
 import static com.google.testing.compile.JavaSourceSubjectFactory.javaSource;
@@ -17,8 +17,8 @@ public class ActivityShortcutTest {
 
     @Test
     public void simpleShortcutActivity() {
-        JavaFileObject source = JavaFileObjects.forResource("SimpleShortcutActivity.java");
-        JavaFileObject generated = JavaFileObjects.forResource("SimpleShortcutActivityGenerated.java");
+        JavaFileObject source = JavaFileObjectsPatched.forResource("SimpleShortcutActivity.java");
+        JavaFileObject generated = JavaFileObjectsPatched.forResource("SimpleShortcutActivityGenerated.java");
         assertAbout(javaSource()).that(source)
                 .processedWith(new ShortcutProcessor())
                 .compilesWithoutError()
@@ -28,8 +28,8 @@ public class ActivityShortcutTest {
 
     @Test
     public void advancedShortcutActivity() {
-        JavaFileObject source = JavaFileObjects.forResource("AdvancedShortcutActivity.java");
-        JavaFileObject generated = JavaFileObjects.forResource("AdvancedShortcutActivityGenerated.java");
+        JavaFileObject source = JavaFileObjectsPatched.forResource("AdvancedShortcutActivity.java");
+        JavaFileObject generated = JavaFileObjectsPatched.forResource("AdvancedShortcutActivityGenerated.java");
         assertAbout(javaSource()).that(source)
                 .processedWith(new ShortcutProcessor())
                 .compilesWithoutError()
@@ -40,10 +40,10 @@ public class ActivityShortcutTest {
     @Test
     public void twoShortcutActivities() {
         List<JavaFileObject> sources = Arrays.asList(
-                JavaFileObjects.forResource("SimpleShortcutActivity.java"),
-                JavaFileObjects.forResource("AdvancedShortcutActivity.java")
+                JavaFileObjectsPatched.forResource("SimpleShortcutActivity.java"),
+                JavaFileObjectsPatched.forResource("AdvancedShortcutActivity.java")
         );
-        JavaFileObject generated = JavaFileObjects.forResource("TwoShortcutActivitiesGenerated.java");
+        JavaFileObject generated = JavaFileObjectsPatched.forResource("TwoShortcutActivitiesGenerated.java");
         assertAbout(javaSources()).that(sources)
                 .processedWith(new ShortcutProcessor())
                 .compilesWithoutError()
@@ -54,11 +54,11 @@ public class ActivityShortcutTest {
     @Test
     public void backstackShortcutActivity() {
         List<JavaFileObject> sources = Arrays.asList(
-                JavaFileObjects.forResource("EmptyActivity1.java"),
-                JavaFileObjects.forResource("EmptyActivity2.java"),
-                JavaFileObjects.forResource("BackStackShortcutActivity.java")
+                JavaFileObjectsPatched.forResource("EmptyActivity1.java"),
+                JavaFileObjectsPatched.forResource("EmptyActivity2.java"),
+                JavaFileObjectsPatched.forResource("BackStackShortcutActivity.java")
         );
-        JavaFileObject generated = JavaFileObjects.forResource("BackStackShortcutActivityGenerated.java");
+        JavaFileObject generated = JavaFileObjectsPatched.forResource("BackStackShortcutActivityGenerated.java");
         assertAbout(javaSources()).that(sources)
                 .processedWith(new ShortcutProcessor())
                 .compilesWithoutError()
@@ -68,8 +68,8 @@ public class ActivityShortcutTest {
 
     @Test
     public void resourcesShortcutActivity() {
-        JavaFileObject source = JavaFileObjects.forResource("ResourcesShortcutActivity.java");
-        JavaFileObject generated = JavaFileObjects.forResource("ResourcesShortcutActivityGenerated.java");
+        JavaFileObject source = JavaFileObjectsPatched.forResource("ResourcesShortcutActivity.java");
+        JavaFileObject generated = JavaFileObjectsPatched.forResource("ResourcesShortcutActivityGenerated.java");
         assertAbout(javaSource()).that(source)
                 .processedWith(new ShortcutProcessor())
                 .compilesWithoutError()
@@ -79,8 +79,8 @@ public class ActivityShortcutTest {
 
     @Test
     public void disabledShortcutActivity() {
-        JavaFileObject source = JavaFileObjects.forResource("DisabledShortcutActivity.java");
-        JavaFileObject generated = JavaFileObjects.forResource("DisabledShortcutActivityGenerated.java");
+        JavaFileObject source = JavaFileObjectsPatched.forResource("DisabledShortcutActivity.java");
+        JavaFileObject generated = JavaFileObjectsPatched.forResource("DisabledShortcutActivityGenerated.java");
         assertAbout(javaSource()).that(source)
                 .processedWith(new ShortcutProcessor())
                 .compilesWithoutError()
@@ -91,10 +91,10 @@ public class ActivityShortcutTest {
     @Test
     public void targetShortcutActivity() {
         List<JavaFileObject> sources = Arrays.asList(
-                JavaFileObjects.forResource("EmptyActivity1.java"),
-                JavaFileObjects.forResource("TargetShortcutActivity.java")
+                JavaFileObjectsPatched.forResource("EmptyActivity1.java"),
+                JavaFileObjectsPatched.forResource("TargetShortcutActivity.java")
         );
-        JavaFileObject generated = JavaFileObjects.forResource("TargetShortcutActivityGenerated.java");
+        JavaFileObject generated = JavaFileObjectsPatched.forResource("TargetShortcutActivityGenerated.java");
         assertAbout(javaSources()).that(sources)
                 .processedWith(new ShortcutProcessor())
                 .compilesWithoutError()

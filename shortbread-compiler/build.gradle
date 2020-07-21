@@ -1,30 +1,16 @@
-import com.android.build.gradle.internal.LoggerWrapper
-import com.android.build.gradle.internal.SdkHandler
-
-apply plugin: 'java'
+apply plugin: 'java-library'
+apply from: '../publish.gradle'
 
 //noinspection GroovyUnusedAssignment
 sourceCompatibility = sourceCompatibilityVersion
 //noinspection GroovyUnusedAssignment
 targetCompatibility = targetCompatibilityVersion
 
-def logger = new LoggerWrapper(project.logger)
-def sdkHandler = new SdkHandler(project, logger)
-for (File file : sdkHandler.sdkLoader.repositories) {
-    repositories.maven {
-        url = file.toURI()
-    }
-}
-
 dependencies {
-    compile project(':shortbread-annotations')
-    compile 'com.google.auto.service:auto-service:1.0-rc2'
-    compile 'com.squareup:javapoet:1.8.0'
+    implementation project(':shortbread-annotations')
+    implementation 'com.squareup:javapoet:1.13.0'
+    compileOnly "com.google.auto.service:auto-service-annotations:$autoServiceVersion"
+    annotationProcessor "com.google.auto.service:auto-service:$autoServiceVersion"
+    compileOnly "net.ltgt.gradle.incap:incap:$incapVersion"
+    annotationProcessor "net.ltgt.gradle.incap:incap-processor:$incapVersion"
 }
-
-ext {
-    libraryDescription = 'Annotation processor for shortbread'
-}
-
-apply from: '../install.gradle'
-apply from: '../bintray.gradle'

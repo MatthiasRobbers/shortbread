@@ -8,10 +8,11 @@ import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.annotation.VisibleForTesting;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.annotation.VisibleForTesting;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,9 +27,9 @@ public final class Shortbread {
     private static Class<?> generated;
     private static Method createShortcuts;
     private static Method callMethodShortcut;
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    @VisibleForTesting
     static boolean shortcutsSet;
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    @VisibleForTesting
     static boolean activityLifecycleCallbacksSet;
 
     /**
@@ -78,7 +79,6 @@ public final class Shortbread {
         if (createShortcuts == null) {
             shortcutManager.removeAllDynamicShortcuts();
         } else {
-            //noinspection TryWithIdenticalCatches
             try {
                 final Object returnValue = createShortcuts.invoke(generated, context);
                 @SuppressWarnings("unchecked")
@@ -128,7 +128,6 @@ public final class Shortbread {
             return;
         }
 
-        //noinspection TryWithIdenticalCatches
         try {
             callMethodShortcut.invoke(generated, activity);
         } catch (IllegalAccessException e) {

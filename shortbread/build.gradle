@@ -1,59 +1,61 @@
+import org.gradle.internal.jvm.Jvm
+
 apply plugin: 'com.android.library'
+apply from: '../publish.gradle'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion project.compileSdkVersion
+    buildToolsVersion project.buildToolsVersion
 
     defaultConfig {
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion project.minSdkVersion
 
         consumerProguardFiles 'proguard-rules.pro'
     }
+
+    compileOptions {
+        sourceCompatibility = sourceCompatibilityVersion
+        targetCompatibility = targetCompatibilityVersion
+    }
 }
 
-task copyDebugTestResources(type: Copy) {
-    from "${projectDir}/src/test/resources"
-    into "${buildDir}/intermediates/sourceFolderJavaResources/test/debug"
+task copyTestResources {
+    copy {
+        from "${projectDir}/src/test/resources"
+        into "${buildDir}/intermediates/sourceFolderJavaResources/debug"
+    }
+
+    copy {
+        from "${projectDir}/src/test/resources"
+        into "${buildDir}/intermediates/sourceFolderJavaResources/release"
+    }
 }
 
-task copyReleaseTestResources(type: Copy) {
-    from "${projectDir}/src/test/resources"
-    into "${buildDir}/intermediates/sourceFolderJavaResources/test/release"
-}
-copyDebugTestResources.dependsOn copyReleaseTestResources
-preBuild.dependsOn copyDebugTestResources
+preBuild.dependsOn copyTestResources
 
 dependencies {
-    compile project(':shortbread-annotations')
-    compile "com.android.support:support-annotations:$supportLibraryVersion"
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.robolectric:robolectric:3.2.2'
-    testCompile 'org.mockito:mockito-core:2.7.9'
-    testCompile 'com.google.truth:truth:0.31'
-    testCompile 'com.google.testing.compile:compile-testing:0.9'
-    testCompile project(':shortbread-compiler')
-    testCompile files(getRuntimeJar())
-    //noinspection UnnecessaryQualifiedReference
-    testCompile files(org.gradle.internal.jvm.Jvm.current().getToolsJar())
-}
-
-ext {
-    libraryDescription = 'Android library that generates app shortcuts for activities and methods'
+    api project(':shortbread-annotations')
+    implementation "androidx.annotation:annotation:$androidxAnnotationVersion"
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.robolectric:robolectric:4.3'
+    testImplementation 'org.mockito:mockito-core:3.4.0'
+    testImplementation 'com.google.truth:truth:1.0.1'
+    testImplementation 'com.google.testing.compile:compile-testing:0.18'
+    testImplementation project(':shortbread-compiler')
+    testImplementation files(getRuntimeJar())
+    testImplementation files(Jvm.current().getToolsJar())
 }
 
 static def getRuntimeJar() {
     try {
-        final File javaBase = new File(System.getProperty("java.home")).getCanonicalFile();
-        File runtimeJar = new File(javaBase, "lib/rt.jar");
+        final File javaBase = new File(System.getProperty("java.home")).getCanonicalFile()
+        File runtimeJar = new File(javaBase, "lib/rt.jar")
         if (runtimeJar.exists()) {
-            return runtimeJar;
+            return runtimeJar
         }
-        runtimeJar = new File(javaBase, "jre/lib/rt.jar");
-        return runtimeJar.exists() ? runtimeJar : null;
+        runtimeJar = new File(javaBase, "jre/lib/rt.jar")
+        return runtimeJar.exists() ? runtimeJar : null
     } catch (IOException e) {
-        throw new RuntimeException(e);
+        throw new RuntimeException(e)
     }
 }
-
-apply from: '../install.gradle'
-apply from: '../bintray.gradle'
