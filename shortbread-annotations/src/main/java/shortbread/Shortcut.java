@@ -1,8 +1,8 @@
 package shortbread;
 
-import android.support.annotation.DrawableRes;
-import android.support.annotation.IntRange;
-import android.support.annotation.StringRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.IntRange;
+import androidx.annotation.StringRes;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;

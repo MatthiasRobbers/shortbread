@@ -1,15 +1,20 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion rootProject.ext.compileSdkVersion
-    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdkVersion project.compileSdkVersion
+    buildToolsVersion project.buildToolsVersion
 
     defaultConfig {
         applicationId "com.example.shortbread"
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+    }
+
+    compileOptions {
+        sourceCompatibility = sourceCompatibilityVersion
+        targetCompatibility = targetCompatibilityVersion
     }
 
     buildTypes {
@@ -20,6 +25,6 @@ android {
 }
 
 dependencies {
-    compile project(':shortbread')
+    implementation project(':shortbread')
     annotationProcessor project(':shortbread-compiler')
 }

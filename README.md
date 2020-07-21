@@ -1,8 +1,8 @@
 Shortbread
 ==========
 
-Android library that generates [app shortcuts][1] for activities and methods annotated with `@Shortcut`. 
-No need to touch the manifest, create XML files or use the shortcut manager. Just annotate the code that 
+Android library that generates [app shortcuts][1] for activities and methods annotated with `@Shortcut`.
+No need to touch the manifest, create XML files or use the shortcut manager. Just annotate the code that
 you want the shortcut to call.
 
 ![Sample](sample.png)
@@ -14,10 +14,10 @@ The four shortcuts above are produced by the following code:
 public class MoviesActivity extends Activity {
 
     // ...
-    
+
     @Shortcut(id = "add_movie", icon = R.drawable.ic_shortcut_add, shortLabel = "Add movie")
     public void addMovie() {
-        // code to add movie, could show an AddMovieDialogFragment for example 
+        // code to add movie, could show an AddMovieDialogFragment for example
     }
 }
 ```
@@ -27,16 +27,16 @@ public class MoviesActivity extends Activity {
 public class BooksActivity extends Activity {
 
     // ...
-    
+
     @Shortcut(id = "favorite_books", icon = R.drawable.ic_shortcut_favorite, shortLabel = "Favorite books")
     public void showFavoriteBooks() {
-        // code to display favorite books, could show a FavoriteBooksFragment for example 
+        // code to display favorite books, could show a FavoriteBooksFragment for example
     }
 }
 ```
 
-To display the shortcuts, call `Shortbread.create(Context context)` as early as possible in the app, for 
-example in `onCreate` of a custom `Application`. 
+To display the shortcuts, call `Shortbread.create(Context context)` as early as possible in the app, for
+example in `onCreate` of a custom `Application`.
 
 ```java
 public class App extends Application {
@@ -51,11 +51,11 @@ public class App extends Application {
 ```
 
 Shortcuts can be customized with attributes, just like using the framework API.
-  
+
 ```java
 @Shortcut(
-    id = "books", 
-    icon = R.drawable.ic_shortcut_books, 
+    id = "books",
+    icon = R.drawable.ic_shortcut_books,
     shortLabel = "Books",
     shortLabelRes = R.string.shortcut_books_short_label,
     longLabel = "List of books",
@@ -73,10 +73,23 @@ public class BooksActivity extends Activity { /*...*/ }
 Download
 --------
 
+### Java
+
 ```groovy
 dependencies {
-    compile 'com.github.matthiasrobbers:shortbread:1.0.2'
-    annotationProcessor 'com.github.matthiasrobbers:shortbread-compiler:1.0.2'
+    implementation 'com.github.matthiasrobbers:shortbread:1.1.0'
+    annotationProcessor 'com.github.matthiasrobbers:shortbread-compiler:1.1.0'
+}
+```
+
+### Kotlin
+
+```groovy
+apply plugin: 'kotlin-kapt'
+
+dependencies {
+    implementation 'com.github.matthiasrobbers:shortbread:1.1.0'
+    kapt 'com.github.matthiasrobbers:shortbread-compiler:1.1.0'
 }
 ```
 

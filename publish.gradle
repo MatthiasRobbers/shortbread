@@ -1,0 +1,12 @@
+apply plugin: "com.vanniktech.maven.publish"
+
+mavenPublish {
+    targets {
+        uploadArchives {
+            releaseRepositoryUrl = "https://api.bintray.com/content/matthiasrobbers/maven/" +
+                    "${project.findProperty("POM_ARTIFACT_ID")}/${project.findProperty("VERSION_NAME")}/"
+            repositoryUsername = System.getenv("BINTRAY_USER")
+            repositoryPassword = System.getenv("BINTRAY_KEY")
+        }
+    }
+}
