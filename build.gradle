@@ -4,9 +4,9 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.4'
-        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.12.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
+        classpath 'com.android.tools.build:gradle:4.1.2'
+        classpath 'com.jakewharton:butterknife-gradle-plugin:10.2.3'
+        classpath 'com.vanniktech:gradle-maven-publish-plugin:0.13.0'
     }
 }
 
@@ -18,12 +18,11 @@ subprojects {
 }
 
 ext {
-    compileSdkVersion = 29
-    buildToolsVersion = '29.0.3'
+    compileSdkVersion = 30
+    buildToolsVersion = '30.0.3'
     minSdkVersion = 14
     sourceCompatibilityVersion = JavaVersion.VERSION_1_8
     targetCompatibilityVersion = JavaVersion.VERSION_1_8
-    androidxAnnotationVersion = '1.1.0'
     autoServiceVersion = '1.0-rc7'
     incapVersion = '0.3'
 }

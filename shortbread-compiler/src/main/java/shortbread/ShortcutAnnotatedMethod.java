@@ -5,8 +5,8 @@ import javax.lang.model.element.TypeElement;
 
 class ShortcutAnnotatedMethod extends ShortcutAnnotatedElement<ExecutableElement> {
 
-    ShortcutAnnotatedMethod(final ExecutableElement element) {
-        super(element);
+    ShortcutAnnotatedMethod(final ExecutableElement element, Shortcut shortcut) {
+        super(element, shortcut);
     }
 
     @Override

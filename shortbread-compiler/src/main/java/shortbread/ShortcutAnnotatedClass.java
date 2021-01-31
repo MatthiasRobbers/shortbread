@@ -4,8 +4,8 @@ import javax.lang.model.element.TypeElement;
 
 class ShortcutAnnotatedClass extends ShortcutAnnotatedElement<TypeElement> {
 
-    ShortcutAnnotatedClass(final TypeElement element) {
-        super(element);
+    ShortcutAnnotatedClass(final TypeElement element, final Shortcut shortcut) {
+        super(element, shortcut);
     }
 
     @Override

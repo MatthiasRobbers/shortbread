@@ -1,3 +1,5 @@
+import org.gradle.internal.jvm.Jvm
+
 apply plugin: 'java-library'
 apply from: '../publish.gradle'
 
@@ -12,5 +14,6 @@ dependencies {
     compileOnly "com.google.auto.service:auto-service-annotations:$autoServiceVersion"
     annotationProcessor "com.google.auto.service:auto-service:$autoServiceVersion"
     compileOnly "net.ltgt.gradle.incap:incap:$incapVersion"
+    compileOnly files(Jvm.current().getToolsJar())
     annotationProcessor "net.ltgt.gradle.incap:incap-processor:$incapVersion"
 }

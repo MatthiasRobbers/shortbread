@@ -42,10 +42,10 @@ class CodeGenerator {
     private final ClassName taskStackBuilder = ClassName.get("android.app", "TaskStackBuilder");
     private final ClassName shortcutUtils = ClassName.get("shortbread", "ShortcutUtils");
 
-    private Filer filer;
-    private List<ShortcutAnnotatedElement> annotatedElements;
+    private final Filer filer;
+    private final List<ShortcutAnnotatedElement<? extends Element>> annotatedElements;
 
-    CodeGenerator(final Filer filer, final List<ShortcutAnnotatedElement> annotatedElements) {
+    CodeGenerator(final Filer filer, final List<ShortcutAnnotatedElement<? extends Element>> annotatedElements) {
         this.filer = filer;
         this.annotatedElements = annotatedElements;
     }
@@ -80,7 +80,7 @@ class CodeGenerator {
                 .addStatement("$T<$T> enabledShortcuts = new $T<>()", List.class, shortcutInfo, ArrayList.class)
                 .addStatement("$T<$T> disabledShortcuts = new $T<>()", List.class, shortcutInfo, ArrayList.class);
 
-        for (final ShortcutAnnotatedElement annotatedElement : annotatedElements) {
+        for (final ShortcutAnnotatedElement<? extends Element> annotatedElement : annotatedElements) {
             Shortcut shortcut = annotatedElement.getShortcut();
             methodBuilder.addCode("$L.add(", shortcut.enabled() ? "enabledShortcuts" : "disabledShortcuts");
             methodBuilder.addCode(createShortcut(annotatedElement));
@@ -92,7 +92,7 @@ class CodeGenerator {
                 .build();
     }
 
-    private CodeBlock createShortcut(ShortcutAnnotatedElement annotatedElement) {
+    private CodeBlock createShortcut(ShortcutAnnotatedElement<? extends Element> annotatedElement) {
         Shortcut shortcut = annotatedElement.getShortcut();
 
         final CodeBlock.Builder blockBuilder = CodeBlock.builder();
@@ -101,7 +101,13 @@ class CodeGenerator {
                 .indent()
                 .indent();
 
-        if (!"".equals(shortcut.shortLabel())) {
+        if (!"".equals(shortcut.shortLabelResName())) {
+            blockBuilder.add(".setShortLabel(context.getString(\n")
+                    .indent().indent()
+                    .add("context.getResources().getIdentifier($S, \"string\", context.getPackageName())))\n",
+                            shortcut.shortLabelResName())
+                    .unindent().unindent();
+        } else if (!"".equals(shortcut.shortLabel())) {
             blockBuilder.add(".setShortLabel($S)\n", shortcut.shortLabel());
         } else if (shortcut.shortLabelRes() != 0) {
             blockBuilder.add(".setShortLabel(context.getString($L))\n", shortcut.shortLabelRes());
@@ -110,17 +116,34 @@ class CodeGenerator {
                     ClassName.bestGuess(annotatedElement.getClassName()));
         }
 
-        if (!"".equals(shortcut.longLabel())) {
+        if (!"".equals(shortcut.longLabelResName())) {
+            blockBuilder.add(".setLongLabel(context.getString(\n")
+                    .indent().indent()
+                    .add("context.getResources().getIdentifier($S, \"string\", context.getPackageName())))\n",
+                            shortcut.longLabelResName())
+                    .unindent().unindent();
+        } else if (!"".equals(shortcut.longLabel())) {
             blockBuilder.add(".setLongLabel($S)\n", shortcut.longLabel());
         } else if (shortcut.longLabelRes() != 0) {
             blockBuilder.add(".setLongLabel(context.getString($L))\n", shortcut.longLabelRes());
         }
 
-        if (shortcut.icon() != 0) {
+        if (!"".equals(shortcut.iconResName())) {
+            blockBuilder.add(".setIcon($T.createWithResource(context,\n", icon)
+                    .indent().indent()
+                    .add("context.getResources().getIdentifier($S, \"drawable\", context.getPackageName())))\n", shortcut.iconResName())
+                    .unindent().unindent();
+        } else if (shortcut.icon() != 0) {
             blockBuilder.add(".setIcon($T.createWithResource(context, $L))\n", icon, shortcut.icon());
         }
 
-        if (!"".equals(shortcut.disabledMessage())) {
+        if (!"".equals(shortcut.disabledMessageResName())) {
+            blockBuilder.add(".setDisabledMessage(context.getString(\n")
+                    .indent().indent()
+                    .add("context.getResources().getIdentifier($S, \"string\", context.getPackageName())))\n",
+                            shortcut.disabledMessageResName())
+                    .unindent().unindent();
+        } else if (!"".equals(shortcut.disabledMessage())) {
             blockBuilder.add(".setDisabledMessage($S)\n", shortcut.disabledMessage());
         } else if (shortcut.disabledMessageRes() != 0) {
             blockBuilder.add(".setDisabledMessage(context.getString($L))\n", shortcut.disabledMessageRes());
@@ -187,7 +210,7 @@ class CodeGenerator {
     private MethodSpec callMethodShortcut() {
         HashMap<String, List<String>> classMethodsMap = new HashMap<>();
 
-        for (final ShortcutAnnotatedElement annotatedElement : annotatedElements) {
+        for (final ShortcutAnnotatedElement<? extends Element> annotatedElement : annotatedElements) {
             if (annotatedElement instanceof ShortcutAnnotatedMethod) {
                 final ShortcutAnnotatedMethod annotatedMethod = (ShortcutAnnotatedMethod) annotatedElement;
                 if (classMethodsMap.containsKey(annotatedMethod.getClassName())) {

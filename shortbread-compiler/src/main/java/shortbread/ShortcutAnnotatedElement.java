@@ -9,9 +9,9 @@ abstract class ShortcutAnnotatedElement<T extends Element> {
 
     Shortcut shortcut;
 
-    ShortcutAnnotatedElement(final T element) {
+    ShortcutAnnotatedElement(final T element, final Shortcut shortcut) {
         this.element = element;
-        this.shortcut = element.getAnnotation(Shortcut.class);
+        this.shortcut = shortcut;
     }
 
     Shortcut getShortcut() {
