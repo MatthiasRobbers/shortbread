@@ -1,5 +1,17 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath "com.github.matthiasrobbers:shortbread-gradle-plugin:${VERSION_NAME}"
+    }
+}
+
 apply plugin: 'com.android.application'
-apply plugin: 'com.jakewharton.butterknife'
+apply plugin: 'com.github.matthiasrobbers.shortbread'
 
 android {
     compileSdkVersion project.compileSdkVersion

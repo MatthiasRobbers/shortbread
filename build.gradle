@@ -5,7 +5,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.2'
-        classpath 'com.jakewharton:butterknife-gradle-plugin:10.2.3'
         classpath 'com.vanniktech:gradle-maven-publish-plugin:0.13.0'
     }
 }

@@ -86,7 +86,7 @@ public class ShortcutProcessor extends AbstractProcessor {
                     return true;
                 }
 
-                annotatedElements.add(new ShortcutAnnotatedClass(typeElement, resolveResourceIds(element)));
+                annotatedElements.add(new ShortcutAnnotatedClass(typeElement, getShortcutData(element)));
             } else if (element.getKind() == ElementKind.METHOD) {
                 final ExecutableElement executableElement = (ExecutableElement) element;
 
@@ -106,7 +106,7 @@ public class ShortcutProcessor extends AbstractProcessor {
                     return true;
                 }
 
-                annotatedElements.add(new ShortcutAnnotatedMethod(executableElement, resolveResourceIds(element)));
+                annotatedElements.add(new ShortcutAnnotatedMethod(executableElement, getShortcutData(element)));
             } else {
                 error(element, "Only classes and methods can be annotated with @", Shortcut.class.getSimpleName());
                 return true;
@@ -150,17 +150,10 @@ public class ShortcutProcessor extends AbstractProcessor {
         return isSubtypeOfActivity(superType);
     }
 
-    private Shortcut resolveResourceIds(Element element) {
+    private ShortcutData getShortcutData(Element element) {
         Shortcut shortcut = element.getAnnotation(Shortcut.class);
-        if (shortcut.shortLabelRes() == 0
-                && shortcut.longLabelRes() == 0
-                && shortcut.icon() == 0
-                && shortcut.disabledMessageRes() == 0) {
-            return shortcut;
-        } else {
-            final Map<Integer, Id> resourceIds = new LinkedHashMap<>(elementToIds(element));
-            return new ResourceIdShortcut(shortcut, resourceIds);
-        }
+        final Map<Integer, Id> resourceIds = new LinkedHashMap<>(elementToIds(element));
+        return new ShortcutData(shortcut, resourceIds);
     }
 
     private Map<Integer, Id> elementToIds(Element element) {

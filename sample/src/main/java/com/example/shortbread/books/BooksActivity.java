@@ -18,7 +18,7 @@ public class BooksActivity extends Activity {
         setContentView(R.layout.activity_books);
     }
 
-    @Shortcut(id = "favorite_books", icon = R2.drawable.ic_shortcut_favorite, shortLabelRes = R.string.label_books_method,
+    @Shortcut(id = "favorite_books", icon = R2.drawable.ic_shortcut_favorite, shortLabelRes = R2.string.label_books_method,
             rank = 2, disabledMessage = "You have no favorite books")
     public void showFavoriteBooks() {
         ((TextView) findViewById(R.id.text)).setText("Favorite books");

@@ -1,1 +1,5 @@
-include ':sample', ':shortbread', ':shortbread-compiler', ':shortbread-annotations'
+include 'shortbread'
+include 'shortbread-compiler'
+include 'shortbread-annotations'
+include 'shortbread-gradle-plugin'
+include 'sample'

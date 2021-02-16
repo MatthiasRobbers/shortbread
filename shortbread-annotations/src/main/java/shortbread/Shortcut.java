@@ -51,16 +51,21 @@ public @interface Shortcut {
     String longLabel() default "";
 
     /**
-     * Drawable icon resource ID for the shortcut icon. If you need an appropriate icon, use Roman Nurik's
+     * Drawable/mipmap icon resource ID for the shortcut icon. If you need an appropriate icon, use Roman Nurik's
      * <a href="https://romannurik.github.io/AndroidAssetStudio/icons-app-shortcut.html">App shortcut icon
      * generator</a>.
      */
     @DrawableRes int icon() default 0;
 
     /**
-     * Alternative element to set the drawable resource to work around using non-final resource IDs.
+     * Alternative element to set a drawable resource to work around using non-final resource IDs.
      */
-    String iconResName() default "";
+    String iconDrawableResName() default "";
+
+    /**
+     * Alternative element to set a mipmap resource to work around using non-final resource IDs.
+     */
+    String iconMipmapResName() default "";
 
     /**
      * Message that appears when a disabled shortcut is tapped. Set as a string resource ID. This is the recommended
