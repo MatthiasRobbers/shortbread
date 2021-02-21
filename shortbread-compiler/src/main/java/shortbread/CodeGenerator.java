@@ -101,7 +101,11 @@ class CodeGenerator {
                 .indent()
                 .indent();
 
-        if (!"".equals(shortcutData.shortLabelResName())) {
+        if (shortcutData.shortLabelRes() != null) {
+            blockBuilder.add(".setShortLabel(context.getString(")
+                    .add(shortcutData.shortLabelRes())
+                    .add("))\n");
+        } else if (!"".equals(shortcutData.shortLabelResName())) {
             blockBuilder.add(".setShortLabel(context.getString(\n")
                     .indent().indent()
                     .add("context.getResources().getIdentifier($S, \"string\", context.getPackageName())))\n",
@@ -114,7 +118,11 @@ class CodeGenerator {
                     ClassName.bestGuess(annotatedElement.getClassName()));
         }
 
-        if (!"".equals(shortcutData.longLabelResName())) {
+        if (shortcutData.longLabelRes() != null) {
+            blockBuilder.add(".setLongLabel(context.getString(")
+                    .add(shortcutData.longLabelRes())
+                    .add("))\n");
+        } else if (!"".equals(shortcutData.longLabelResName())) {
             blockBuilder.add(".setLongLabel(context.getString(\n")
                     .indent().indent()
                     .add("context.getResources().getIdentifier($S, \"string\", context.getPackageName())))\n",
@@ -124,19 +132,22 @@ class CodeGenerator {
             blockBuilder.add(".setLongLabel($S)\n", shortcutData.longLabel());
         }
 
-        if (!"".equals(shortcutData.iconDrawableResName())) {
+        if (shortcutData.icon() != null) {
+            blockBuilder.add(".setIcon($T.createWithResource(context, ", icon)
+                    .add(shortcutData.icon())
+                    .add("))\n");
+        } else if (!"".equals(shortcutData.iconResName())) {
             blockBuilder.add(".setIcon($T.createWithResource(context,\n", icon)
                     .indent().indent()
-                    .add("context.getResources().getIdentifier($S, \"drawable\", context.getPackageName())))\n", shortcutData.iconDrawableResName())
-                    .unindent().unindent();
-        } else if (!"".equals(shortcutData.iconMipmapResName())) {
-            blockBuilder.add(".setIcon($T.createWithResource(context,\n", icon)
-                    .indent().indent()
-                    .add("context.getResources().getIdentifier($S, \"mipmap\", context.getPackageName())))\n", shortcutData.iconMipmapResName())
+                    .add("context.getResources().getIdentifier($S, \"drawable\", context.getPackageName())))\n", shortcutData.iconResName())
                     .unindent().unindent();
         }
 
-        if (!"".equals(shortcutData.disabledMessageResName())) {
+        if (shortcutData.disabledMessageRes() != null) {
+            blockBuilder.add(".setDisabledMessage(context.getString(")
+                    .add(shortcutData.disabledMessageRes())
+                    .add("))\n");
+        } else if (!"".equals(shortcutData.disabledMessageResName())) {
             blockBuilder.add(".setDisabledMessage(context.getString(\n")
                     .indent().indent()
                     .add("context.getResources().getIdentifier($S, \"string\", context.getPackageName())))\n",

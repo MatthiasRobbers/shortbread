@@ -1,5 +1,5 @@
 apply plugin: 'java-gradle-plugin'
-apply from: '../publish.gradle'
+apply plugin: 'com.vanniktech.maven.publish'
 
 dependencies {
     runtimeOnly 'com.jakewharton:butterknife-gradle-plugin:10.2.3'

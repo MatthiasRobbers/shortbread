@@ -9,46 +9,47 @@ import com.sun.tools.javac.code.Symbol;
 /**
  * Represents an ID of an Android resource.
  * <p>
- * Adapted from Butter Knife, see
+ * Copied from Butter Knife, see
  * https://github.com/JakeWharton/butterknife/blob/master/butterknife-compiler/src/main/java/butterknife/compiler/Id.java
  */
 final class Id {
-
+    private static final ClassName ANDROID_R = ClassName.get("android", "R");
     private static final String R = "R";
 
     final int value;
     final CodeBlock code;
-    final String resourceName;
-    final String type;
+    final boolean qualifed;
+
+    Id(int value) {
+        this(value, null);
+    }
 
     Id(int value, @Nullable Symbol rSymbol) {
         this.value = value;
         if (rSymbol != null) {
             ClassName className = ClassName.get(rSymbol.packge().getQualifiedName().toString(), R,
                     rSymbol.enclClass().name.toString());
-            this.type = rSymbol.enclClass().name.toString();
-            this.resourceName = rSymbol.name.toString();
+            String resourceName = rSymbol.name.toString();
 
-            this.code = CodeBlock.of("$T.$N", className, resourceName);
+            this.code = className.topLevelClassName().equals(ANDROID_R)
+                    ? CodeBlock.of("$L.$N", className, resourceName)
+                    : CodeBlock.of("$T.$N", className, resourceName);
+            this.qualifed = true;
         } else {
-            this.type = null;
-            this.resourceName = null;
             this.code = CodeBlock.of("$L", value);
+            this.qualifed = false;
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
+    @Override public boolean equals(Object o) {
         return o instanceof Id && value == ((Id) o).value;
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         return value;
     }
 
-    @Override
-    public String toString() {
-        return R + "." + type + "." + resourceName;
+    @Override public String toString() {
+        throw new UnsupportedOperationException("Please use value or code explicitly");
     }
 }

@@ -108,7 +108,7 @@ public class ShortcutProcessor extends AbstractProcessor {
 
                 annotatedElements.add(new ShortcutAnnotatedMethod(executableElement, getShortcutData(element)));
             } else {
-                error(element, "Only classes and methods can be annotated with @", Shortcut.class.getSimpleName());
+                error(element, "Only classes and methods can be annotated with @%s", Shortcut.class.getSimpleName());
                 return true;
             }
         }

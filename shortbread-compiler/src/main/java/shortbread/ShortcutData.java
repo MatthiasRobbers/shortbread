@@ -1,5 +1,7 @@
 package shortbread;
 
+import com.squareup.javapoet.CodeBlock;
+
 import java.util.Map;
 
 class ShortcutData {
@@ -16,59 +18,61 @@ class ShortcutData {
         return shortcut.id();
     }
 
-    public String shortLabelResName() {
-        if (shortcut.shortLabelRes() != 0
-                && resourceIds.containsKey(shortcut.shortLabelRes())) {
-            return resourceIds.get(shortcut.shortLabelRes()).resourceName;
+    public CodeBlock shortLabelRes() {
+        if (shortcut.shortLabelRes() != 0 && resourceIds.containsKey(shortcut.shortLabelRes())) {
+            return resourceIds.get(shortcut.shortLabelRes()).code;
         } else {
-            return shortcut.shortLabelResName();
+            return null;
         }
+    }
+
+    public String shortLabelResName() {
+        return shortcut.shortLabelResName();
     }
 
     public String shortLabel() {
         return shortcut.shortLabel();
     }
 
-    public String longLabelResName() {
-        if (shortcut.longLabelRes() != 0
-                && resourceIds.containsKey(shortcut.longLabelRes())) {
-            return resourceIds.get(shortcut.longLabelRes()).resourceName;
+    public CodeBlock longLabelRes() {
+        if (shortcut.longLabelRes() != 0 && resourceIds.containsKey(shortcut.longLabelRes())) {
+            return resourceIds.get(shortcut.longLabelRes()).code;
         } else {
-            return shortcut.longLabelResName();
+            return null;
         }
+    }
+
+    public String longLabelResName() {
+        return shortcut.longLabelResName();
     }
 
     public String longLabel() {
         return shortcut.longLabel();
     }
 
-    public String iconDrawableResName() {
-        if (shortcut.icon() != 0
-                && resourceIds.containsKey(shortcut.icon())
-                && "drawable".equals(resourceIds.get(shortcut.icon()).type)) {
-            return resourceIds.get(shortcut.icon()).resourceName;
+    public CodeBlock icon() {
+        if (shortcut.icon() != 0 && resourceIds.containsKey(shortcut.icon())) {
+            return resourceIds.get(shortcut.icon()).code;
         } else {
-            return shortcut.iconDrawableResName();
+            return null;
         }
     }
 
-    public String iconMipmapResName() {
-        if (shortcut.icon() != 0
-                && resourceIds.containsKey(shortcut.icon())
-                && "mipmap".equals(resourceIds.get(shortcut.icon()).type)) {
-            return resourceIds.get(shortcut.icon()).resourceName;
+    public String iconResName() {
+        return shortcut.iconResName();
+    }
+
+    public CodeBlock disabledMessageRes() {
+        if (shortcut.disabledMessageRes() != 0
+                && resourceIds.containsKey(shortcut.disabledMessageRes())) {
+            return resourceIds.get(shortcut.disabledMessageRes()).code;
         } else {
-            return shortcut.iconMipmapResName();
+            return null;
         }
     }
 
     public String disabledMessageResName() {
-        if (shortcut.disabledMessageRes() != 0
-                && resourceIds.containsKey(shortcut.disabledMessageRes())) {
-            return resourceIds.get(shortcut.disabledMessageRes()).resourceName;
-        } else {
-            return shortcut.disabledMessageResName();
-        }
+        return shortcut.disabledMessageResName();
     }
 
     public String disabledMessage() {

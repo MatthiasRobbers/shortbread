@@ -1,7 +1,7 @@
 import org.gradle.internal.jvm.Jvm
 
 apply plugin: 'java-library'
-apply from: '../publish.gradle'
+apply plugin: 'com.vanniktech.maven.publish'
 
 //noinspection GroovyUnusedAssignment
 sourceCompatibility = sourceCompatibilityVersion

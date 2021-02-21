@@ -60,12 +60,7 @@ public @interface Shortcut {
     /**
      * Alternative element to set a drawable resource to work around using non-final resource IDs.
      */
-    String iconDrawableResName() default "";
-
-    /**
-     * Alternative element to set a mipmap resource to work around using non-final resource IDs.
-     */
-    String iconMipmapResName() default "";
+    String iconResName() default "";
 
     /**
      * Message that appears when a disabled shortcut is tapped. Set as a string resource ID. This is the recommended
