@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.graphics.drawable.Icon;
 import com.example.AdvancedShortcutActivity;
+import com.example.R;
 import com.example.SimpleShortcutActivity;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +34,7 @@ public final class ShortbreadGenerated {
         enabledShortcuts.add(new ShortcutInfo.Builder(context, "ID_2")
                 .setShortLabel("SHORT_LABEL")
                 .setLongLabel("LONG_LABEL")
-                .setIcon(Icon.createWithResource(context, 123))
+                .setIcon(Icon.createWithResource(context, R.drawable.ic_shortcut))
                 .setDisabledMessage("DISABLED_MESSAGE")
                 .setIntents(TaskStackBuilder.create(context)
                         .addParentStack(AdvancedShortcutActivity.class)

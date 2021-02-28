@@ -28,9 +28,12 @@ public class ActivityShortcutTest {
 
     @Test
     public void advancedShortcutActivity() {
-        JavaFileObject source = JavaFileObjectsPatched.forResource("AdvancedShortcutActivity.java");
+        List<JavaFileObject> sources = Arrays.asList(
+                JavaFileObjectsPatched.forResource("AdvancedShortcutActivity.java"),
+                JavaFileObjectsPatched.forResource("R.java")
+        );
         JavaFileObject generated = JavaFileObjectsPatched.forResource("AdvancedShortcutActivityGenerated.java");
-        assertAbout(javaSource()).that(source)
+        assertAbout(javaSources()).that(sources)
                 .processedWith(new ShortcutProcessor())
                 .compilesWithoutError()
                 .and()
@@ -41,7 +44,8 @@ public class ActivityShortcutTest {
     public void twoShortcutActivities() {
         List<JavaFileObject> sources = Arrays.asList(
                 JavaFileObjectsPatched.forResource("SimpleShortcutActivity.java"),
-                JavaFileObjectsPatched.forResource("AdvancedShortcutActivity.java")
+                JavaFileObjectsPatched.forResource("AdvancedShortcutActivity.java"),
+                JavaFileObjectsPatched.forResource("R.java")
         );
         JavaFileObject generated = JavaFileObjectsPatched.forResource("TwoShortcutActivitiesGenerated.java");
         assertAbout(javaSources()).that(sources)
@@ -68,9 +72,12 @@ public class ActivityShortcutTest {
 
     @Test
     public void resourcesShortcutActivity() {
-        JavaFileObject source = JavaFileObjectsPatched.forResource("ResourcesShortcutActivity.java");
+        List<JavaFileObject> sources = Arrays.asList(
+                JavaFileObjectsPatched.forResource("ResourcesShortcutActivity.java"),
+                JavaFileObjectsPatched.forResource("R.java")
+        );
         JavaFileObject generated = JavaFileObjectsPatched.forResource("ResourcesShortcutActivityGenerated.java");
-        assertAbout(javaSource()).that(source)
+        assertAbout(javaSources()).that(sources)
                 .processedWith(new ShortcutProcessor())
                 .compilesWithoutError()
                 .and()
