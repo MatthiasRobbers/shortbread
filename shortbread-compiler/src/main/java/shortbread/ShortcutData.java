@@ -1,97 +1,56 @@
 package shortbread;
 
-import com.squareup.javapoet.CodeBlock;
-
 import java.util.Map;
 
 class ShortcutData {
 
-    private final Shortcut shortcut;
-    private final Map<Integer, Id> resourceIds;
+    String id;
+    Id shortLabelRes;
+    String shortLabelResName;
+    String shortLabel;
+    Id longLabelRes;
+    String longLabelResName;
+    String longLabel;
+    Id icon;
+    String iconResName;
+    Id disabledMessageRes;
+    String disabledMessageResName;
+    String disabledMessage;
+    int rank;
+    boolean enabled;
+    String action;
 
-    public ShortcutData(Shortcut shortcut, Map<Integer, Id> resourceIds) {
-        this.shortcut = shortcut;
-        this.resourceIds = resourceIds;
-    }
+    ShortcutData(Shortcut shortcut, Map<Integer, Id> resourceIds) {
+        id = shortcut.id();
 
-    public String id() {
-        return shortcut.id();
-    }
-
-    public CodeBlock shortLabelRes() {
         if (shortcut.shortLabelRes() != 0 && resourceIds.containsKey(shortcut.shortLabelRes())) {
-            return resourceIds.get(shortcut.shortLabelRes()).code;
-        } else {
-            return null;
+            shortLabelRes = resourceIds.get(shortcut.shortLabelRes());
         }
-    }
+        shortLabelResName = shortcut.shortLabelResName();
+        shortLabel = shortcut.shortLabel();
 
-    public String shortLabelResName() {
-        return shortcut.shortLabelResName();
-    }
-
-    public String shortLabel() {
-        return shortcut.shortLabel();
-    }
-
-    public CodeBlock longLabelRes() {
         if (shortcut.longLabelRes() != 0 && resourceIds.containsKey(shortcut.longLabelRes())) {
-            return resourceIds.get(shortcut.longLabelRes()).code;
-        } else {
-            return null;
+            longLabelRes = resourceIds.get(shortcut.longLabelRes());
         }
-    }
+        longLabelResName = shortcut.longLabelResName();
+        longLabel = shortcut.longLabel();
 
-    public String longLabelResName() {
-        return shortcut.longLabelResName();
-    }
-
-    public String longLabel() {
-        return shortcut.longLabel();
-    }
-
-    public CodeBlock icon() {
         if (shortcut.icon() != 0 && resourceIds.containsKey(shortcut.icon())) {
-            return resourceIds.get(shortcut.icon()).code;
-        } else {
-            return null;
+            icon = resourceIds.get(shortcut.icon());
         }
-    }
+        iconResName = shortcut.iconResName();
 
-    public String iconResName() {
-        return shortcut.iconResName();
-    }
-
-    public CodeBlock disabledMessageRes() {
         if (shortcut.disabledMessageRes() != 0
                 && resourceIds.containsKey(shortcut.disabledMessageRes())) {
-            return resourceIds.get(shortcut.disabledMessageRes()).code;
-        } else {
-            return null;
+            disabledMessageRes = resourceIds.get(shortcut.disabledMessageRes());
         }
-    }
+        disabledMessageResName = shortcut.disabledMessageResName();
+        disabledMessage = shortcut.disabledMessage();
 
-    public String disabledMessageResName() {
-        return shortcut.disabledMessageResName();
-    }
+        rank = shortcut.rank();
 
-    public String disabledMessage() {
-        return shortcut.disabledMessage();
-    }
+        enabled = shortcut.enabled();
 
-    public int rank() {
-        return shortcut.rank();
-    }
-
-    public boolean enabled() {
-        return shortcut.enabled();
-    }
-
-    public Class activity() {
-        return shortcut.activity();
-    }
-
-    public String action() {
-        return shortcut.action();
+        action = shortcut.action();
     }
 }

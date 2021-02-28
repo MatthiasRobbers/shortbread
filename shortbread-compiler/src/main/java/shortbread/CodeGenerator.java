@@ -82,7 +82,7 @@ class CodeGenerator {
 
         for (final ShortcutAnnotatedElement<? extends Element> annotatedElement : annotatedElements) {
             ShortcutData shortcutData = annotatedElement.getShortcutData();
-            methodBuilder.addCode("$L.add(", shortcutData.enabled() ? "enabledShortcuts" : "disabledShortcuts");
+            methodBuilder.addCode("$L.add(", shortcutData.enabled ? "enabledShortcuts" : "disabledShortcuts");
             methodBuilder.addCode(createShortcut(annotatedElement));
             methodBuilder.addStatement(")");
         }
@@ -97,68 +97,68 @@ class CodeGenerator {
 
         final CodeBlock.Builder blockBuilder = CodeBlock.builder();
 
-        blockBuilder.add("new $T.Builder(context, $S)\n", shortcutInfo, shortcutData.id())
+        blockBuilder.add("new $T.Builder(context, $S)\n", shortcutInfo, shortcutData.id)
                 .indent()
                 .indent();
 
-        if (shortcutData.shortLabelRes() != null) {
+        if (shortcutData.shortLabelRes != null) {
             blockBuilder.add(".setShortLabel(context.getString(")
-                    .add(shortcutData.shortLabelRes())
+                    .add(shortcutData.shortLabelRes.code)
                     .add("))\n");
-        } else if (!"".equals(shortcutData.shortLabelResName())) {
+        } else if (!"".equals(shortcutData.shortLabelResName)) {
             blockBuilder.add(".setShortLabel(context.getString(\n")
                     .indent().indent()
                     .add("context.getResources().getIdentifier($S, \"string\", context.getPackageName())))\n",
-                            shortcutData.shortLabelResName())
+                            shortcutData.shortLabelResName)
                     .unindent().unindent();
-        } else if (!"".equals(shortcutData.shortLabel())) {
-            blockBuilder.add(".setShortLabel($S)\n", shortcutData.shortLabel());
+        } else if (!"".equals(shortcutData.shortLabel)) {
+            blockBuilder.add(".setShortLabel($S)\n", shortcutData.shortLabel);
         } else {
             blockBuilder.add(".setShortLabel($T.getActivityLabel(context, $T.class))\n", shortcutUtils,
                     ClassName.bestGuess(annotatedElement.getClassName()));
         }
 
-        if (shortcutData.longLabelRes() != null) {
+        if (shortcutData.longLabelRes != null) {
             blockBuilder.add(".setLongLabel(context.getString(")
-                    .add(shortcutData.longLabelRes())
+                    .add(shortcutData.longLabelRes.code)
                     .add("))\n");
-        } else if (!"".equals(shortcutData.longLabelResName())) {
+        } else if (!"".equals(shortcutData.longLabelResName)) {
             blockBuilder.add(".setLongLabel(context.getString(\n")
                     .indent().indent()
                     .add("context.getResources().getIdentifier($S, \"string\", context.getPackageName())))\n",
-                            shortcutData.longLabelResName())
+                            shortcutData.longLabelResName)
                     .unindent().unindent();
-        } else if (!"".equals(shortcutData.longLabel())) {
-            blockBuilder.add(".setLongLabel($S)\n", shortcutData.longLabel());
+        } else if (!"".equals(shortcutData.longLabel)) {
+            blockBuilder.add(".setLongLabel($S)\n", shortcutData.longLabel);
         }
 
-        if (shortcutData.icon() != null) {
+        if (shortcutData.icon != null) {
             blockBuilder.add(".setIcon($T.createWithResource(context, ", icon)
-                    .add(shortcutData.icon())
+                    .add(shortcutData.icon.code)
                     .add("))\n");
-        } else if (!"".equals(shortcutData.iconResName())) {
+        } else if (!"".equals(shortcutData.iconResName)) {
             blockBuilder.add(".setIcon($T.createWithResource(context,\n", icon)
                     .indent().indent()
-                    .add("context.getResources().getIdentifier($S, \"drawable\", context.getPackageName())))\n", shortcutData.iconResName())
+                    .add("context.getResources().getIdentifier($S, \"drawable\", context.getPackageName())))\n", shortcutData.iconResName)
                     .unindent().unindent();
         }
 
-        if (shortcutData.disabledMessageRes() != null) {
+        if (shortcutData.disabledMessageRes != null) {
             blockBuilder.add(".setDisabledMessage(context.getString(")
-                    .add(shortcutData.disabledMessageRes())
+                    .add(shortcutData.disabledMessageRes.code)
                     .add("))\n");
-        } else if (!"".equals(shortcutData.disabledMessageResName())) {
+        } else if (!"".equals(shortcutData.disabledMessageResName)) {
             blockBuilder.add(".setDisabledMessage(context.getString(\n")
                     .indent().indent()
                     .add("context.getResources().getIdentifier($S, \"string\", context.getPackageName())))\n",
-                            shortcutData.disabledMessageResName())
+                            shortcutData.disabledMessageResName)
                     .unindent().unindent();
-        } else if (!"".equals(shortcutData.disabledMessage())) {
-            blockBuilder.add(".setDisabledMessage($S)\n", shortcutData.disabledMessage());
+        } else if (!"".equals(shortcutData.disabledMessage)) {
+            blockBuilder.add(".setDisabledMessage($S)\n", shortcutData.disabledMessage);
         }
 
         try {
-            shortcutData.activity();
+            annotatedElement.getElement().getAnnotation(Shortcut.class).activity();
         } catch (MirroredTypeException mte) {
             if (!(mte.getTypeMirror() instanceof NoType)) {
                 DeclaredType classTypeMirror = (DeclaredType) mte.getTypeMirror();
@@ -196,10 +196,10 @@ class CodeGenerator {
 
         blockBuilder.add(".addNextIntent(new $T(context, $T.class)\n", intent, activityClassName);
         blockBuilder.indent().indent();
-        if ("".equals(shortcutData.action())) {
+        if ("".equals(shortcutData.action)) {
             blockBuilder.add(".setAction($T.ACTION_VIEW)", intent);
         } else {
-            blockBuilder.add(".setAction($S)", shortcutData.action());
+            blockBuilder.add(".setAction($S)", shortcutData.action);
         }
         if (annotatedElement instanceof ShortcutAnnotatedMethod) {
             blockBuilder.add("\n.putExtra($S, $S)", EXTRA_METHOD, ((ShortcutAnnotatedMethod) annotatedElement).getMethodName());
@@ -209,7 +209,7 @@ class CodeGenerator {
         return blockBuilder.add(")\n")
                 .add(".getIntents())\n")
                 .unindent().unindent()
-                .add(".setRank($L)\n", shortcutData.rank())
+                .add(".setRank($L)\n", shortcutData.rank)
                 .add(".build()")
                 .unindent().unindent()
                 .build();
