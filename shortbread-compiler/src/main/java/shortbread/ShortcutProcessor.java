@@ -4,9 +4,7 @@ import androidx.annotation.Nullable;
 
 import com.google.auto.service.AutoService;
 import com.sun.source.util.Trees;
-import com.sun.tools.javac.code.Symbol;
 import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.tree.TreeScanner;
 
 import net.ltgt.gradle.incap.IncrementalAnnotationProcessor;
 
@@ -29,7 +27,6 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
-import static java.util.Objects.requireNonNull;
 import static net.ltgt.gradle.incap.IncrementalAnnotationProcessorType.AGGREGATING;
 
 @AutoService(Processor.class)
@@ -81,13 +78,12 @@ public class ShortcutProcessor extends AbstractProcessor {
 
             if (element.getKind() == ElementKind.CLASS) {
                 final TypeElement typeElement = (TypeElement) element;
-                annotatedElements.add(new ShortcutAnnotatedClass(typeElement, getShortcutData(element)));
+                annotatedElements.add(new ShortcutAnnotatedClass(typeElement, getShortcutWithIds(element)));
             } else if (element.getKind() == ElementKind.METHOD) {
                 final ExecutableElement executableElement = (ExecutableElement) element;
-                annotatedElements.add(new ShortcutAnnotatedMethod(executableElement, getShortcutData(element)));
+                annotatedElements.add(new ShortcutAnnotatedMethod(executableElement, getShortcutWithIds(element)));
             }
         }
-
 
         new CodeGenerator(processingEnv.getFiler(), annotatedElements).generate();
         return false;
@@ -98,13 +94,8 @@ public class ShortcutProcessor extends AbstractProcessor {
         return SourceVersion.latestSupported();
     }
 
-    private ShortcutData getShortcutData(Element element) {
+    private ShortcutData getShortcutWithIds(Element element) {
         Shortcut shortcut = element.getAnnotation(Shortcut.class);
-        final Map<Integer, Id> resourceIds = new LinkedHashMap<>(elementToIds(element));
-        return new ShortcutData(shortcut, resourceIds);
-    }
-
-    private Map<Integer, Id> elementToIds(Element element) {
         Map<Integer, Id> resourceIds = new LinkedHashMap<>();
         JCTree tree = (JCTree) trees.getTree(element, getMirror(element));
         if (tree != null) { // tree can be null if the references are compiled types and not source
@@ -113,7 +104,7 @@ public class ShortcutProcessor extends AbstractProcessor {
             resourceIds = rScanner.resourceIds;
         }
 
-        return resourceIds;
+        return new ShortcutData(shortcut, resourceIds);
     }
 
     private static @Nullable
@@ -124,37 +115,5 @@ public class ShortcutProcessor extends AbstractProcessor {
             }
         }
         return null;
-    }
-
-    private static class RScanner extends TreeScanner {
-        Map<Integer, Id> resourceIds = new LinkedHashMap<>();
-
-        @Override
-        public void visitSelect(JCTree.JCFieldAccess jcFieldAccess) {
-            Symbol symbol = jcFieldAccess.sym;
-            Id id = parseId(symbol);
-            if (id != null) {
-                resourceIds.put(id.value, id);
-            }
-        }
-
-        @Nullable
-        private Id parseId(Symbol symbol) {
-            Id id = null;
-            if (symbol.getEnclosingElement() != null
-                    && symbol.getEnclosingElement().getEnclosingElement() != null
-                    && symbol.getEnclosingElement().getEnclosingElement().enclClass() != null) {
-                try {
-                    int value = (Integer) requireNonNull(((Symbol.VarSymbol) symbol).getConstantValue());
-                    id = new Id(value, symbol);
-                } catch (Exception ignored) {
-                }
-            }
-            return id;
-        }
-
-        void reset() {
-            resourceIds.clear();
-        }
     }
 }

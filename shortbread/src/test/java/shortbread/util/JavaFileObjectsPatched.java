@@ -18,8 +18,7 @@ public class JavaFileObjectsPatched {
     public static JavaFileObject forResource(String resourceName) {
         try {
             URL url = Files.find(Paths.get(""), Integer.MAX_VALUE, (path, basicFileAttributes) ->
-                    path.toString().contains("sourceFolderJavaResources")
-                            && path.getFileName().toString().equals(resourceName))
+                    path.toString().contains("sourceFolderJavaResources") && path.endsWith(resourceName))
                     .findFirst()
                     .orElseThrow(FileNotFoundException::new)
                     .toUri().toURL();

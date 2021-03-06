@@ -33,13 +33,10 @@ class ShortcutValidator {
                     || !methodHasNoParameters()) {
                 return false;
             }
-        } else {
-            error(element, "Only classes and methods can be annotated with @%s", Shortcut.class.getSimpleName());
-            return false;
         }
 
         return noMultipleShortLabels()
-                && noMultpleLongLabels()
+                && noMultipleLongLabels()
                 && noMultipleDisabledMessages()
                 && noMultipleIcons();
     }
@@ -104,7 +101,7 @@ class ShortcutValidator {
         return false;
     }
 
-    private boolean noMultpleLongLabels() {
+    private boolean noMultipleLongLabels() {
         Shortcut shortcut = element.getAnnotation(Shortcut.class);
 
         int counter = 0;
@@ -163,7 +160,6 @@ class ShortcutValidator {
         error(element, "Only one of icon and iconResName can be set");
         return false;
     }
-
 
     private void error(Element element, String message, Object... args) {
         if (args.length > 0) {

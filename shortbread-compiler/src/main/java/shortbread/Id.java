@@ -18,7 +18,7 @@ final class Id {
 
     final int value;
     final CodeBlock code;
-    final boolean qualifed;
+    final boolean qualified;
 
     Id(int value) {
         this(value, null);
@@ -34,10 +34,10 @@ final class Id {
             this.code = className.topLevelClassName().equals(ANDROID_R)
                     ? CodeBlock.of("$L.$N", className, resourceName)
                     : CodeBlock.of("$T.$N", className, resourceName);
-            this.qualifed = true;
+            this.qualified = true;
         } else {
             this.code = CodeBlock.of("$L", value);
-            this.qualifed = false;
+            this.qualified = false;
         }
     }
 

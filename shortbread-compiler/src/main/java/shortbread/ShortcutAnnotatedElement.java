@@ -5,9 +5,9 @@ import javax.lang.model.element.TypeElement;
 
 abstract class ShortcutAnnotatedElement<T extends Element> {
 
-    T element;
+    final T element;
 
-    ShortcutData shortcutData;
+    final ShortcutData shortcutData;
 
     ShortcutAnnotatedElement(final T element, final ShortcutData shortcutData) {
         this.element = element;

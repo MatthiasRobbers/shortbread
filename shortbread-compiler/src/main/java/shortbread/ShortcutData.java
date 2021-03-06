@@ -4,21 +4,21 @@ import java.util.Map;
 
 class ShortcutData {
 
-    String id;
+    final String id;
     Id shortLabelRes;
-    String shortLabelResName;
-    String shortLabel;
+    final String shortLabelResName;
+    final String shortLabel;
     Id longLabelRes;
-    String longLabelResName;
-    String longLabel;
+    final String longLabelResName;
+    final String longLabel;
     Id icon;
-    String iconResName;
+    final String iconResName;
     Id disabledMessageRes;
-    String disabledMessageResName;
-    String disabledMessage;
-    int rank;
-    boolean enabled;
-    String action;
+    final String disabledMessageResName;
+    final String disabledMessage;
+    final int rank;
+    final boolean enabled;
+    final String action;
 
     ShortcutData(Shortcut shortcut, Map<Integer, Id> resourceIds) {
         id = shortcut.id();

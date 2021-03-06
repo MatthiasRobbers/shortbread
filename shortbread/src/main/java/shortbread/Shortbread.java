@@ -116,12 +116,12 @@ public final class Shortbread {
             private Class<? extends Activity> createdActivityClass;
 
             @Override
-            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+            public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {
                 createdActivityClass = activity.getClass();
             }
 
             @Override
-            public void onActivityStarted(Activity activity) {
+            public void onActivityStarted(@NonNull Activity activity) {
                 if (activity.getClass() == createdActivityClass) {
                     callMethodShortcut(activity);
                     createdActivityClass = null;
