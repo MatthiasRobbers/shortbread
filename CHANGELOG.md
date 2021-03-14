@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-Unreleased: Version 1.2.0 *(2021-03-XX)*
+Version 1.2.0 *(2021-03-14)*
 ----------------------------
 * New: Support for non-final resource IDs. See [README.md](https://github.com/MatthiasRobbers/shortbread##non-final-resource-ids)
 for detailed usage instructions.
