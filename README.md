@@ -124,10 +124,12 @@ dependencies {
 
 Non-final resource IDs
 ----------------------
-If you are using resource IDs in `@Shortcut` attributes auch as `shortLabelRes`, which is recommended, you may see this warning in Android Studio:
+If you are using resource IDs in `@Shortcut` attributes auch as `shortLabelRes`, which is recommended, you may see this
+warning in Android Studio:
 > Resource IDs will be non-final in Android Gradle Plugin version 5.0, avoid using them as annotation attributes.
 
-If the annotation is located inside a library, the project won't even compile. To overcome this, add the Shortbread Gradle plugin and apply it to your modules:
+If the annotation is located inside a library, the project won't even compile. To overcome this, add the Shortbread
+Gradle plugin and apply it to your modules:
 
 ```groovy
 buildscript {
@@ -144,17 +146,22 @@ buildscript {
 apply plugin: 'com.github.matthiasrobbers.shortbread'
 ```
 
-Now make sure you use `R2` instead of `R` inside all `@Shortcut` annotations:
+Now make sure you use `R2` instead of `R` inside all `@Shortcut` annotations. If you are using `mipmap` as shortcut icon
+resource type, switch to `drawable` by simply moving the resources from the `mipmap-` folders to the corresponding
+`drawable-` folders.
 
 ```kotlin
 @Shortcut(icon = R2.drawable.ic_shortcut_movies, shortLabelRes = R2.string.label_movies)
 ```
 
-The plugin uses the [Butter Knife][2] Gradle plugin to generate the `R2` class with final values.
+The plugin uses the [Butter Knife][2] Gradle plugin to generate the `R2` class with final values. Referencing them does
+not make the warning disappear (you can suppress it with `@SuppressLint("NonConstantResourceId")`), but most likely will
+be the only way to use resource IDs in annotations in the future.
 <details>
 <summary>Alternative to Gradle plugin</summary>
 
-If for whatever reason you can't or don't want to use the plugin, you can use the additional deprecated string attributes like `iconResName`, `shortLabelResName` and so on.
+If for you can't (or don't want to) use the plugin, you can use the additional deprecated string attributes like
+`iconResName`, `shortLabelResName` and so on.
 
 ```kotlin
 @Shortcut(iconResName = "ic_shortcut_movies", shortLabelResName = "label_movies")

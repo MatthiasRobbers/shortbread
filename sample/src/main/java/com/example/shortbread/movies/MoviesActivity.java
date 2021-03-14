@@ -1,6 +1,5 @@
 package com.example.shortbread.movies;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -12,7 +11,6 @@ import com.example.shortbread.books.BooksActivity;
 
 import shortbread.Shortcut;
 
-@SuppressLint("NonConstantResourceId")
 @Shortcut(id = "movies", action = "movie_shortcut", icon = R2.drawable.ic_shortcut_movies, rank = 3,
         backStack = {MainActivity.class, BooksActivity.class})
 public class MoviesActivity extends Activity {

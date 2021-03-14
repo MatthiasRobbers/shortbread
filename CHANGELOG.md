@@ -1,9 +1,13 @@
 Change Log
 ==========
 
-Unreleased: Version 1.2.0 *(2021-XX-XX)*
------------------------------
+Unreleased: Version 1.2.0 *(2021-03-XX)*
+----------------------------
+* New: Support for non-final resource IDs. See [README.md](https://github.com/MatthiasRobbers/shortbread##non-final-resource-ids)
+for detailed usage instructions.
+* Update: `androidx.annotation:annotation` to `1.1.0`
 * Update: Android Gradle plugin to `4.1.2`
+* Migrated publishing from JCenter to Maven Central
 
 
 Version 1.1.0 *(2020-07-21)*

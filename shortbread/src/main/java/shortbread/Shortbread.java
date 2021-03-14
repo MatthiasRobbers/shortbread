@@ -141,11 +141,11 @@ public final class Shortbread {
             callMethodShortcut.invoke(generated, activity);
         } catch (IllegalAccessException e) {
             if (ShortcutUtils.isDebuggable(activity)) {
-                Log.d(TAG, "Error calling shortcuts", e);
+                Log.d(TAG, "Error calling shortcut", e);
             }
         } catch (InvocationTargetException e) {
             if (ShortcutUtils.isDebuggable(activity)) {
-                Log.d(TAG, "Error calling shortcuts", e);
+                Log.d(TAG, "Error calling shortcut", e);
             }
         }
     }

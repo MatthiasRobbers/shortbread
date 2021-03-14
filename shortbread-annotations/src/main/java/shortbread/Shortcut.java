@@ -55,7 +55,7 @@ public @interface Shortcut {
     String longLabel() default "";
 
     /**
-     * Drawable/mipmap icon resource ID for the shortcut icon. If you need an appropriate icon, use Roman Nurik's
+     * Drawable icon resource ID for the shortcut icon. If you need an appropriate icon, use Roman Nurik's
      * <a href="https://romannurik.github.io/AndroidAssetStudio/icons-app-shortcut.html">App shortcut icon
      * generator</a>.
      */
