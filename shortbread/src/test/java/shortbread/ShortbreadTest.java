@@ -45,7 +45,7 @@ public class ShortbreadTest {
         Shortbread.shortcutsSet = false;
         Shortbread.activityLifecycleCallbacksSet = false;
 
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(activity.getApplicationContext()).thenReturn(application);
         when(application.getApplicationContext()).thenReturn(application);
         when(application.getSystemService(ShortcutManager.class)).thenReturn(shortcutManager);
@@ -91,7 +91,7 @@ public class ShortbreadTest {
         final List<ShortcutInfo> disabledShortcuts = ShortbreadGenerated.createShortcuts(activity).get(1);
 
         Shortbread.create(activity);
-        ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+        @SuppressWarnings("rawtypes") ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
         //noinspection unchecked
         verify(shortcutManager).disableShortcuts(captor.capture());
         assertEquals(disabledShortcuts.size(), captor.getValue().size());

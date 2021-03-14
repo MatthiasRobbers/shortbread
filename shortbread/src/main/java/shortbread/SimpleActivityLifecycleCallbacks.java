@@ -1,45 +1,45 @@
 package shortbread;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
-@TargetApi(14)
+import androidx.annotation.NonNull;
+
 class SimpleActivityLifecycleCallbacks implements Application.ActivityLifecycleCallbacks {
 
     @Override
-    public void onActivityCreated(final Activity activity, final Bundle savedInstanceState) {
+    public void onActivityCreated(@NonNull final Activity activity, final Bundle savedInstanceState) {
 
     }
 
     @Override
-    public void onActivityStarted(final Activity activity) {
+    public void onActivityStarted(@NonNull Activity activity) {
 
     }
 
     @Override
-    public void onActivityResumed(final Activity activity) {
+    public void onActivityResumed(@NonNull final Activity activity) {
 
     }
 
     @Override
-    public void onActivityPaused(final Activity activity) {
+    public void onActivityPaused(@NonNull final Activity activity) {
 
     }
 
     @Override
-    public void onActivityStopped(final Activity activity) {
+    public void onActivityStopped(@NonNull final Activity activity) {
 
     }
 
     @Override
-    public void onActivitySaveInstanceState(final Activity activity, final Bundle outState) {
+    public void onActivitySaveInstanceState(@NonNull final Activity activity, @NonNull final Bundle outState) {
 
     }
 
     @Override
-    public void onActivityDestroyed(final Activity activity) {
+    public void onActivityDestroyed(@NonNull final Activity activity) {
 
     }
 }

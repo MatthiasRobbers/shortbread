@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+Version 1.2.0 *(2021-03-14)*
+----------------------------
+* New: Support for non-final resource IDs. See [README.md](https://github.com/MatthiasRobbers/shortbread##non-final-resource-ids)
+for detailed usage instructions.
+* Update: `androidx.annotation:annotation` to `1.1.0`
+* Update: Android Gradle plugin to `4.1.2`
+* Migrated publishing from JCenter to Maven Central
+
+
 Version 1.1.0 *(2020-07-21)*
 -----------------------------
 * New: Support for incremental annotation processing
@@ -13,7 +22,7 @@ Version 1.1.0 *(2020-07-21)*
 
 Version 1.0.2 *(2017-09-24)*
 -----------------------------
-* Fix: Annotated methods are called before `onCreate()` (#13)
+* Fix: Annotated methods are called before `onCreate()` ([#13](https://github.com/MatthiasRobbers/shortbread/issues/13))
 * Update: Support annotations library to `26.0.2`. This requires the new Google Maven Repository:
 
   ```groovy
@@ -29,13 +38,11 @@ Version 1.0.2 *(2017-09-24)*
 
 Version 1.0.1 *(2017-03-04)*
 -----------------------------
-
 * Fix: `Shortbread.create(context)` can now also be called if there are no `@Shortcut` annotations in the code, which before produced a crash. Previously created shortcuts are now removed.
 * Fix: Internal `NullPointerException` when an activity containing method shortcuts is not launched via a method shortcut
 * Add Javadoc for the public API
 
 
-Version 10.2.0 *(2017-02-11)*
+Version 1.0.0 *(2017-02-11)*
 -----------------------------
-
 Initial release

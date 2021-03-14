@@ -8,15 +8,15 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 
 /**
- * Annotate activities and public activities. Each annotation generates a shortcut, which is customizable with the
- * elements, of that only {@link #id()} is required.
+ * Annotate activities and public methods of activities. Each annotation generates a shortcut, which is customizable
+ * with the elements, of that only {@link #id()} is required.
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface Shortcut {
 
     /**
      * Unique String identifier for the shortcut. This is the only required element of the annotation because you need
-     * id if you want to disable a previously generated shortcut that was pinned by the user.
+     * it if you want to disable a previously generated shortcut that was pinned by the user.
      */
     String id();
 
@@ -24,6 +24,13 @@ public @interface Shortcut {
      * Short label string resource ID. This is the recommended element to set the short label.
      */
     @StringRes int shortLabelRes() default 0;
+
+    /**
+     * Alternative element to set the string resource to work around using non-final resource IDs.
+     * Deprecated, only use if {@link #shortLabelRes()} in conjunction with shortbread-gradle-plugin does not work for
+     * you.
+     */
+    @Deprecated String shortLabelResName() default "";
 
     /**
      * Alternative element to set the short label directly with a String.
@@ -34,6 +41,13 @@ public @interface Shortcut {
      * Long label string resource ID. This is the recommended element to set the short label.
      */
     @StringRes int longLabelRes() default 0;
+
+    /**
+     * Alternative element to set the string resource to work around using non-final resource IDs.
+     * Deprecated, only use if {@link #longLabelRes()} in conjunction with shortbread-gradle-plugin does not work for
+     * you.
+     */
+    @Deprecated String longLabelResName() default "";
 
     /**
      * Alternative element to set the long label directly with a String.
@@ -48,10 +62,23 @@ public @interface Shortcut {
     @DrawableRes int icon() default 0;
 
     /**
+     * Alternative element to set a drawable resource to work around using non-final resource IDs.
+     * Deprecated, only use if {@link #icon()} in conjunction with shortbread-gradle-plugin does not work for you.
+     */
+    @Deprecated String iconResName() default "";
+
+    /**
      * Message that appears when a disabled shortcut is tapped. Set as a string resource ID. This is the recommended
      * element to set the disabled message.
      */
     @StringRes int disabledMessageRes() default 0;
+
+    /**
+     * Alternative element to set the string resource to work around using non-final resource IDs.
+     * Deprecated, only use if {@link #longLabelRes()} in conjunction with shortbread-gradle-plugin does not work for
+     * you.
+     */
+    @Deprecated String disabledMessageResName() default "";
 
     /**
      * Alternative element to set the disabled message directly with a String.

@@ -31,6 +31,7 @@ public final class Shortbread {
     static boolean shortcutsSet;
     @VisibleForTesting
     static boolean activityLifecycleCallbacksSet;
+    private static final String TAG = "Shortbread";
 
     /**
      * Publishes the shortcuts created from activity class annotations and activity method annotations in the project.
@@ -51,9 +52,13 @@ public final class Shortbread {
                 createShortcuts = generated.getMethod("createShortcuts", Context.class);
                 callMethodShortcut = generated.getMethod("callMethodShortcut", Activity.class);
             } catch (ClassNotFoundException e) {
-                Log.i(Shortbread.class.getSimpleName(), "No shortcuts found");
+                if (ShortcutUtils.isDebuggable(context)) {
+                    Log.d(TAG, "No shortcuts found");
+                }
             } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+                if (ShortcutUtils.isDebuggable(context)) {
+                    Log.d(TAG, "Error generating shortcuts", e);
+                }
             }
         }
 
@@ -91,9 +96,13 @@ public final class Shortbread {
                 shortcutManager.disableShortcuts(disabledShortcutsIds);
                 shortcutManager.setDynamicShortcuts(enabledShortcuts);
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                if (ShortcutUtils.isDebuggable(context)) {
+                    Log.d(TAG, "Error setting shortcuts", e);
+                }
             } catch (InvocationTargetException e) {
-                e.printStackTrace();
+                if (ShortcutUtils.isDebuggable(context)) {
+                    Log.d(TAG, "Error setting shortcuts", e);
+                }
             }
         }
 
@@ -107,12 +116,12 @@ public final class Shortbread {
             private Class<? extends Activity> createdActivityClass;
 
             @Override
-            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+            public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {
                 createdActivityClass = activity.getClass();
             }
 
             @Override
-            public void onActivityStarted(Activity activity) {
+            public void onActivityStarted(@NonNull Activity activity) {
                 if (activity.getClass() == createdActivityClass) {
                     callMethodShortcut(activity);
                     createdActivityClass = null;
@@ -131,9 +140,13 @@ public final class Shortbread {
         try {
             callMethodShortcut.invoke(generated, activity);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            if (ShortcutUtils.isDebuggable(activity)) {
+                Log.d(TAG, "Error calling shortcut", e);
+            }
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            if (ShortcutUtils.isDebuggable(activity)) {
+                Log.d(TAG, "Error calling shortcut", e);
+            }
         }
     }
 

@@ -1,5 +1,5 @@
 apply plugin: 'java-library'
-apply from: '../publish.gradle'
+apply plugin: 'com.vanniktech.maven.publish'
 
 //noinspection GroovyUnusedAssignment
 sourceCompatibility = sourceCompatibilityVersion
@@ -7,5 +7,5 @@ sourceCompatibility = sourceCompatibilityVersion
 targetCompatibility = targetCompatibilityVersion
 
 dependencies {
-    implementation "androidx.annotation:annotation:$androidxAnnotationVersion"
+    api 'androidx.annotation:annotation:1.1.0'
 }

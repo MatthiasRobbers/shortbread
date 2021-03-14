@@ -1,0 +1,18 @@
+apply plugin: 'java-gradle-plugin'
+apply plugin: 'com.vanniktech.maven.publish'
+
+dependencies {
+    runtimeOnly 'com.jakewharton:butterknife-gradle-plugin:10.2.3'
+}
+
+sourceCompatibility = sourceCompatibilityVersion
+targetCompatibility = targetCompatibilityVersion
+
+gradlePlugin {
+    plugins {
+        shortbreadPlugin {
+            id = 'com.github.matthiasrobbers.shortbread'
+            implementationClass = 'shortbread.plugin.ShortbreadPlugin'
+        }
+    }
+}

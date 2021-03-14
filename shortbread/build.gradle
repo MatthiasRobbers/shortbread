@@ -1,7 +1,7 @@
 import org.gradle.internal.jvm.Jvm
 
 apply plugin: 'com.android.library'
-apply from: '../publish.gradle'
+apply plugin: 'com.vanniktech.maven.publish'
 
 android {
     compileSdkVersion project.compileSdkVersion
@@ -16,6 +16,10 @@ android {
     compileOptions {
         sourceCompatibility = sourceCompatibilityVersion
         targetCompatibility = targetCompatibilityVersion
+    }
+
+    buildFeatures {
+        buildConfig = false
     }
 }
 
@@ -35,12 +39,11 @@ preBuild.dependsOn copyTestResources
 
 dependencies {
     api project(':shortbread-annotations')
-    implementation "androidx.annotation:annotation:$androidxAnnotationVersion"
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.robolectric:robolectric:4.3'
-    testImplementation 'org.mockito:mockito-core:3.4.0'
-    testImplementation 'com.google.truth:truth:1.0.1'
-    testImplementation 'com.google.testing.compile:compile-testing:0.18'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.5.1'
+    testImplementation 'org.mockito:mockito-core:3.8.0'
+    testImplementation 'com.google.truth:truth:1.1.2'
+    testImplementation 'com.google.testing.compile:compile-testing:0.19'
     testImplementation project(':shortbread-compiler')
     testImplementation files(getRuntimeJar())
     testImplementation files(Jvm.current().getToolsJar())
