@@ -2,11 +2,10 @@ buildscript {
     repositories {
         mavenCentral()
         google()
-        mavenLocal()
     }
 
     dependencies {
-        classpath "com.github.matthiasrobbers:shortbread-gradle-plugin:${VERSION_NAME}"
+        classpath "com.github.matthiasrobbers:shortbread-gradle-plugin:1.2.0"
     }
 }
 

@@ -35,20 +35,6 @@ class BooksActivity : Activity() {
 }
 ```
 
-To display the shortcuts, call `Shortbread.create(Context context)` as early as possible in the app, for
-example in `onCreate` of a custom `Application`.
-
-```kotlin
-class App : Application() {
-
-    override fun onCreate() {
-        super.onCreate()
-
-        Shortbread.create(this)
-    }
-}
-```
-
 Shortcuts can be customized with attributes, just like using the framework API.
 
 <details open>
@@ -106,8 +92,8 @@ Shortbread is available on `mavenCentral()`.
 apply plugin: 'kotlin-kapt'
 
 dependencies {
-    implementation 'com.github.matthiasrobbers:shortbread:1.2.0'
-    kapt 'com.github.matthiasrobbers:shortbread-compiler:1.2.0'
+    implementation 'com.github.matthiasrobbers:shortbread:1.3.0'
+    kapt 'com.github.matthiasrobbers:shortbread-compiler:1.3.0'
 }
 ```
 </details>
@@ -116,8 +102,8 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'com.github.matthiasrobbers:shortbread:1.2.0'
-    annotationProcessor 'com.github.matthiasrobbers:shortbread-compiler:1.2.0'
+    implementation 'com.github.matthiasrobbers:shortbread:1.3.0'
+    annotationProcessor 'com.github.matthiasrobbers:shortbread-compiler:1.3.0'
 }
 ```
 </details>
@@ -137,7 +123,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.github.matthiasrobbers:shortbread-gradle-plugin:1.2.0'
+        classpath 'com.github.matthiasrobbers:shortbread-gradle-plugin:1.3.0'
     }
 }
 ```

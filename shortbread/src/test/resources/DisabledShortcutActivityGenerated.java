@@ -1,7 +1,6 @@
 package shortbread;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
@@ -30,8 +29,5 @@ public final class ShortbreadGenerated {
                 .setRank(0)
                 .build());
         return Arrays.asList(enabledShortcuts, disabledShortcuts);
-    }
-
-    public static void callMethodShortcut(Activity activity) {
     }
 }
