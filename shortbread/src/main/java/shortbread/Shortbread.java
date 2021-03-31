@@ -1,6 +1,5 @@
 package shortbread;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -12,7 +11,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.annotation.VisibleForTesting;
+import androidx.startup.AppInitializer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,17 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Creates app shortcuts from {@code @Shortcut} annotations, {@link #create(Context)} is all that needs to be called.
+ * Creates app shortcuts from {@code @Shortcut} annotations. This class is automatically created by
+ * {@link shortbread.ShortbreadInitializer} and sets the shortcuts automatically on app startup. No interaction with
+ * this class is required, the only code needed is the annotations.
  */
 public final class Shortbread {
 
-    private static Class<?> generated;
-    private static Method createShortcuts;
-    private static Method callMethodShortcut;
-    @VisibleForTesting
-    static boolean shortcutsSet;
-    @VisibleForTesting
-    static boolean activityLifecycleCallbacksSet;
+    private Class<?> generated;
+    private Method createShortcuts;
+    private Method callMethodShortcut;
     private static final String TAG = "Shortbread";
 
     /**
@@ -38,10 +35,15 @@ public final class Shortbread {
      * It will also set an activity lifecycle listener to call an annotated activity method when an activity is started
      * with a method shortcut.
      *
+     * @deprecated No need to call this anymore, the library is automatically initialized by {@link shortbread.ShortbreadInitializer}.
      * @param context Any context, the implementation will use the application context.
      */
-    @TargetApi(25)
+    @Deprecated
     public static void create(@NonNull Context context) {
+        AppInitializer.getInstance(context).initializeComponent(ShortbreadInitializer.class);
+    }
+
+    Shortbread(@NonNull Context context) {
         if (Build.VERSION.SDK_INT < 25) {
             return;
         }
@@ -50,7 +52,6 @@ public final class Shortbread {
             try {
                 generated = Class.forName("shortbread.ShortbreadGenerated");
                 createShortcuts = generated.getMethod("createShortcuts", Context.class);
-                callMethodShortcut = generated.getMethod("callMethodShortcut", Activity.class);
             } catch (ClassNotFoundException e) {
                 if (ShortcutUtils.isDebuggable(context)) {
                     Log.d(TAG, "No shortcuts found");
@@ -60,25 +61,25 @@ public final class Shortbread {
                     Log.d(TAG, "Error generating shortcuts", e);
                 }
             }
+
+            try {
+                callMethodShortcut = generated.getMethod("callMethodShortcut", Activity.class);
+            } catch (NoSuchMethodException ignored) {
+                // no method shortcuts found
+            }
         }
 
         Context applicationContext = context.getApplicationContext();
 
-        if (!shortcutsSet) {
-            setShortcuts(applicationContext);
-        }
+        setShortcuts(applicationContext);
 
-        if (!activityLifecycleCallbacksSet) {
+        if (callMethodShortcut != null) {
             setActivityLifecycleCallbacks(applicationContext);
-        }
-
-        if (context instanceof Activity) {
-            callMethodShortcut((Activity) context);
         }
     }
 
     @RequiresApi(25)
-    private static void setShortcuts(@NonNull Context context) {
+    private void setShortcuts(@NonNull Context context) {
         ShortcutManager shortcutManager = context.getSystemService(ShortcutManager.class);
 
         if (createShortcuts == null) {
@@ -105,12 +106,10 @@ public final class Shortbread {
                 }
             }
         }
-
-        shortcutsSet = true;
     }
 
     @RequiresApi(14)
-    private static void setActivityLifecycleCallbacks(@NonNull Context applicationContext) {
+    private void setActivityLifecycleCallbacks(@NonNull Context applicationContext) {
         ((Application) applicationContext).registerActivityLifecycleCallbacks(new SimpleActivityLifecycleCallbacks() {
 
             private Class<? extends Activity> createdActivityClass;
@@ -128,11 +127,9 @@ public final class Shortbread {
                 }
             }
         });
-
-        activityLifecycleCallbacksSet = true;
     }
 
-    private static void callMethodShortcut(@NonNull Activity activity) {
+    private void callMethodShortcut(@NonNull Activity activity) {
         if (callMethodShortcut == null || !activity.getIntent().hasExtra("shortbread_method")) {
             return;
         }
@@ -148,8 +145,5 @@ public final class Shortbread {
                 Log.d(TAG, "Error calling shortcut", e);
             }
         }
-    }
-
-    private Shortbread() {
     }
 }

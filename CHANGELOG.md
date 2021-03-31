@@ -1,9 +1,17 @@
 Change Log
 ==========
 
+Version 1.3.0 *(2021-03-31)*
+----------------------------
+* New: Shortbread is now initialized automatically using [App Startup](https://developer.android.com/topic/libraries/app-startup)
+* Deprecated: `Shortbread.create(context)` - no need to call this anymore as the shortcuts are set automatically during app startup
+* Fix: Resource values sometimes were not properly read when the incremental annotation processing was incremental
+* Improve: `ActivityLifecycleCallbacks` will not be registered if there are no method shortcuts
+
+
 Version 1.2.0 *(2021-03-14)*
 ----------------------------
-* New: Support for non-final resource IDs. See [README.md](https://github.com/MatthiasRobbers/shortbread##non-final-resource-ids)
+* New: Support for non-final resource IDs. See [README.md](https://github.com/MatthiasRobbers/shortbread#non-final-resource-ids)
 for detailed usage instructions.
 * Update: `androidx.annotation:annotation` to `1.1.0`
 * Update: Android Gradle plugin to `4.1.2`

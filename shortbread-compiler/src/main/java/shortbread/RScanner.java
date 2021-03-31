@@ -15,7 +15,7 @@ import static java.util.Objects.requireNonNull;
  * Copied and stripped from Butter Knife, see
  * https://github.com/JakeWharton/butterknife/blob/master/butterknife-compiler/src/main/java/butterknife/compiler/ButterKnifeProcessor.java
  */
-public class RScanner extends TreeScanner {
+class RScanner extends TreeScanner {
 
     final Map<Integer, Id> resourceIds = new LinkedHashMap<>();
 

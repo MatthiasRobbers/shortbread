@@ -51,15 +51,20 @@ class CodeGenerator {
     }
 
     void generate() {
-        TypeSpec shortbread = TypeSpec.classBuilder("ShortbreadGenerated")
+        TypeSpec.Builder shortbreadBuilder = TypeSpec.classBuilder("ShortbreadGenerated")
                 .addAnnotation(AnnotationSpec.builder(suppressLint)
                         .addMember("value", "$S", "NewApi")
                         .addMember("value", "$S", "ResourceType")
                         .build())
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-                .addMethod(createShortcuts())
-                .addMethod(callMethodShortcut())
-                .build();
+                .addMethod(createShortcuts());
+
+        MethodSpec callMethodShortcut = callMethodShortcut();
+        if (callMethodShortcut != null) {
+            shortbreadBuilder.addMethod(callMethodShortcut);
+        }
+
+        TypeSpec shortbread = shortbreadBuilder.build();
 
         JavaFile javaFile = JavaFile.builder("shortbread", shortbread)
                 .indent("    ")
@@ -231,24 +236,28 @@ class CodeGenerator {
             }
         }
 
-        final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("callMethodShortcut")
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(void.class)
-                .addParameter(activity, "activity");
+        if (classMethodsMap.isEmpty()) {
+            return null;
+        } else {
+            final MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("callMethodShortcut")
+                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                    .returns(void.class)
+                    .addParameter(activity, "activity");
 
-        for (final Map.Entry<String, List<String>> annotatedMethodName : classMethodsMap.entrySet()) {
-            ClassName activityClassName = ClassName.bestGuess(annotatedMethodName.getKey());
-            List<String> methodNames = annotatedMethodName.getValue();
-            methodBuilder.beginControlFlow("if (activity instanceof $T)", activityClassName);
-            for (final String methodName : methodNames) {
-                methodBuilder.beginControlFlow("if ($S.equals(activity.getIntent().getStringExtra($S)))", methodName, EXTRA_METHOD);
-                methodBuilder.addStatement("(($T) activity).$L()", activityClassName, methodName);
+            for (final Map.Entry<String, List<String>> annotatedMethodName : classMethodsMap.entrySet()) {
+                ClassName activityClassName = ClassName.bestGuess(annotatedMethodName.getKey());
+                List<String> methodNames = annotatedMethodName.getValue();
+                methodBuilder.beginControlFlow("if (activity instanceof $T)", activityClassName);
+                for (final String methodName : methodNames) {
+                    methodBuilder.beginControlFlow("if ($S.equals(activity.getIntent().getStringExtra($S)))", methodName, EXTRA_METHOD);
+                    methodBuilder.addStatement("(($T) activity).$L()", activityClassName, methodName);
+                    methodBuilder.endControlFlow();
+                }
                 methodBuilder.endControlFlow();
             }
-            methodBuilder.endControlFlow();
-        }
 
-        return methodBuilder
-                .build();
+            return methodBuilder
+                    .build();
+        }
     }
 }
