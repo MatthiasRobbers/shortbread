@@ -9,7 +9,7 @@ buildscript {
     }
 }
 
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 apply plugin: 'com.github.matthiasrobbers.shortbread'
 
 android {
@@ -17,28 +17,16 @@ android {
     buildToolsVersion project.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.example.shortbread"
         minSdkVersion project.minSdkVersion
-        targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
     }
 
     compileOptions {
         sourceCompatibility = sourceCompatibilityVersion
         targetCompatibility = targetCompatibilityVersion
     }
-
-    buildTypes {
-        debug {
-            minifyEnabled true
-        }
-    }
 }
 
 dependencies {
     implementation project(':shortbread')
     annotationProcessor project(':shortbread-compiler')
-
-    implementation project(':sample-library')
 }

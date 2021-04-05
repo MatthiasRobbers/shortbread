@@ -17,7 +17,7 @@ public class MethodShortcutTest {
     @Test
     public void simpleMethodShortcutActivity() {
         JavaFileObject source = JavaFileObjectsPatched.forResource("MethodShortcutActivity.java");
-        JavaFileObject generated = JavaFileObjectsPatched.forResource("MethodShortcutActivityGenerated.java");
+        JavaFileObject generated = JavaFileObjectsPatched.forResource("MethodShortcutActivity_Shortcuts.java");
         assertAbout(javaSource()).that(source)
                 .processedWith(new ShortcutProcessor())
                 .compilesWithoutError()
@@ -28,7 +28,7 @@ public class MethodShortcutTest {
     @Test
     public void twoMethodShortcutsInOneActivity() {
         JavaFileObject source = JavaFileObjectsPatched.forResource("TwoMethodShortcutsActivity.java");
-        JavaFileObject generated = JavaFileObjectsPatched.forResource("TwoMethodShortcutsActivityGenerated.java");
+        JavaFileObject generated = JavaFileObjectsPatched.forResource("TwoMethodShortcutsActivity_Shortcuts.java");
         assertAbout(javaSource()).that(source)
                 .processedWith(new ShortcutProcessor())
                 .compilesWithoutError()
@@ -40,11 +40,12 @@ public class MethodShortcutTest {
     public void twoMethodShortcutActivities() {
         JavaFileObject source1 = JavaFileObjectsPatched.forResource("MethodShortcutActivity.java");
         JavaFileObject source2 = JavaFileObjectsPatched.forResource("MethodShortcutActivity2.java");
-        JavaFileObject generated = JavaFileObjectsPatched.forResource("TwoMethodShortcutActivitiesGenerated.java");
+        JavaFileObject generated1 = JavaFileObjectsPatched.forResource("MethodShortcutActivity_Shortcuts.java");
+        JavaFileObject generated2 = JavaFileObjectsPatched.forResource("MethodShortcutActivity2_Shortcuts.java");
         assertAbout(javaSources()).that(Arrays.asList(source1, source2))
                 .processedWith(new ShortcutProcessor())
                 .compilesWithoutError()
                 .and()
-                .generatesSources(generated);
+                .generatesSources(generated1, generated2);
     }
 }

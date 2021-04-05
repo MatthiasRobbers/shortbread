@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 1.4.0 *(2021-0X-XX)*
+----------------------------
+* Improve: Shortbread is now an _isolating_ annotation processor, which improves the performance of incremental annotation proccessing.
+Before, the processor was of type _aggregating_.
+* Improve: Shorcut methods/functions don't have to be `public` anymore. Any visibility higher than `private` is enough.
+* Fix: When using `R2`, resource values sometimes were not properly read when the incremental annotation processing was incremental
+
+
 Version 1.3.0 *(2021-03-31)*
 ----------------------------
 * New: Shortbread is now initialized automatically using [App Startup](https://developer.android.com/topic/libraries/app-startup)

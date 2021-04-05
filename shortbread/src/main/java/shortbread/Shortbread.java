@@ -3,6 +3,10 @@ package shortbread;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.os.Build;
@@ -14,9 +18,11 @@ import androidx.annotation.RequiresApi;
 import androidx.startup.AppInitializer;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
+import shortbread.internal.MethodShortcuts;
+import shortbread.internal.Shortcuts;
 
 /**
  * Creates app shortcuts from {@code @Shortcut} annotations. This class is automatically created by
@@ -25,9 +31,9 @@ import java.util.List;
  */
 public final class Shortbread {
 
-    private Class<?> generated;
-    private Method createShortcuts;
-    private Method callMethodShortcut;
+    private final List<Shortcuts> shortcutsObjects = new ArrayList<>();
+    private final List<MethodShortcuts<? extends Activity>> methodShortcutsObjects = new ArrayList<>();
+    private static final String EXTRA_METHOD = "shortbread_method";
     private static final String TAG = "Shortbread";
 
     /**
@@ -35,8 +41,8 @@ public final class Shortbread {
      * It will also set an activity lifecycle listener to call an annotated activity method when an activity is started
      * with a method shortcut.
      *
-     * @deprecated No need to call this anymore, the library is automatically initialized by {@link shortbread.ShortbreadInitializer}.
      * @param context Any context, the implementation will use the application context.
+     * @deprecated No need to call this anymore, the library is automatically initialized by {@link shortbread.ShortbreadInitializer}.
      */
     @Deprecated
     public static void create(@NonNull Context context) {
@@ -48,63 +54,63 @@ public final class Shortbread {
             return;
         }
 
-        if (generated == null) {
-            try {
-                generated = Class.forName("shortbread.ShortbreadGenerated");
-                createShortcuts = generated.getMethod("createShortcuts", Context.class);
-            } catch (ClassNotFoundException e) {
-                if (ShortcutUtils.isDebuggable(context)) {
-                    Log.d(TAG, "No shortcuts found");
-                }
-            } catch (NoSuchMethodException e) {
-                if (ShortcutUtils.isDebuggable(context)) {
-                    Log.d(TAG, "Error generating shortcuts", e);
-                }
-            }
-
-            try {
-                callMethodShortcut = generated.getMethod("callMethodShortcut", Activity.class);
-            } catch (NoSuchMethodException ignored) {
-                // no method shortcuts found
-            }
-        }
-
         Context applicationContext = context.getApplicationContext();
 
+        createShortcutsObjects(applicationContext);
         setShortcuts(applicationContext);
 
-        if (callMethodShortcut != null) {
+        if (containsMethodShortcuts()) {
             setActivityLifecycleCallbacks(applicationContext);
+        }
+    }
+
+    private void createShortcutsObjects(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), PackageManager.GET_ACTIVITIES);
+            for (ActivityInfo activityInfo : packageInfo.activities) {
+                try {
+                    Class<?> shortcutsClass = Class.forName(activityInfo.name + "_Shortcuts");
+                    Shortcuts shortcutsObject = (Shortcuts) shortcutsClass.getConstructor().newInstance();
+                    shortcutsObjects.add(shortcutsObject);
+
+                    if (shortcutsObject instanceof MethodShortcuts<?>) {
+                        methodShortcutsObjects.add((MethodShortcuts<? extends Activity>) shortcutsObject);
+                    }
+                } catch (ClassNotFoundException ignored) {
+                    // no shortcuts found for that activity
+                }
+            }
+        } catch (NoSuchMethodException
+                | IllegalAccessException
+                | InstantiationException
+                | InvocationTargetException
+                | PackageManager.NameNotFoundException e) {
+            if (isDebuggable(context)) {
+                Log.w(TAG, e);
+            }
         }
     }
 
     @RequiresApi(25)
     private void setShortcuts(@NonNull Context context) {
+        List<ShortcutInfo> enabledShortcuts = new ArrayList<>();
+        List<String> disabledShortcutIds = new ArrayList<>();
+        for (Shortcuts shortcutsObject : shortcutsObjects) {
+            enabledShortcuts.addAll(shortcutsObject.getShortcuts(context));
+            disabledShortcutIds.addAll(shortcutsObject.getDisabledShortcutIds());
+        }
+
         ShortcutManager shortcutManager = context.getSystemService(ShortcutManager.class);
 
-        if (createShortcuts == null) {
+        if (enabledShortcuts.isEmpty()) {
             shortcutManager.removeAllDynamicShortcuts();
         } else {
-            try {
-                final Object returnValue = createShortcuts.invoke(generated, context);
-                @SuppressWarnings("unchecked")
-                List<List<ShortcutInfo>> shortcuts = (List<List<ShortcutInfo>>) returnValue;
-                List<ShortcutInfo> enabledShortcuts = shortcuts.get(0);
-                List<String> disabledShortcutsIds = new ArrayList<>();
-                for (final ShortcutInfo shortcutInfo : shortcuts.get(1)) {
-                    disabledShortcutsIds.add(shortcutInfo.getId());
-                }
-                shortcutManager.disableShortcuts(disabledShortcutsIds);
-                shortcutManager.setDynamicShortcuts(enabledShortcuts);
-            } catch (IllegalAccessException e) {
-                if (ShortcutUtils.isDebuggable(context)) {
-                    Log.d(TAG, "Error setting shortcuts", e);
-                }
-            } catch (InvocationTargetException e) {
-                if (ShortcutUtils.isDebuggable(context)) {
-                    Log.d(TAG, "Error setting shortcuts", e);
-                }
-            }
+            shortcutManager.setDynamicShortcuts(enabledShortcuts);
+        }
+
+        if (!disabledShortcutIds.isEmpty()) {
+            shortcutManager.disableShortcuts(disabledShortcutIds);
         }
     }
 
@@ -116,7 +122,9 @@ public final class Shortbread {
 
             @Override
             public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {
-                createdActivityClass = activity.getClass();
+                if (activity.getIntent().hasExtra(EXTRA_METHOD)) {
+                    createdActivityClass = activity.getClass();
+                }
             }
 
             @Override
@@ -129,21 +137,26 @@ public final class Shortbread {
         });
     }
 
-    private void callMethodShortcut(@NonNull Activity activity) {
-        if (callMethodShortcut == null || !activity.getIntent().hasExtra("shortbread_method")) {
-            return;
+    private boolean containsMethodShortcuts() {
+        for (Shortcuts shortcutsObject : shortcutsObjects) {
+            if (shortcutsObject instanceof MethodShortcuts) {
+                return true;
+            }
         }
 
-        try {
-            callMethodShortcut.invoke(generated, activity);
-        } catch (IllegalAccessException e) {
-            if (ShortcutUtils.isDebuggable(activity)) {
-                Log.d(TAG, "Error calling shortcut", e);
-            }
-        } catch (InvocationTargetException e) {
-            if (ShortcutUtils.isDebuggable(activity)) {
-                Log.d(TAG, "Error calling shortcut", e);
+        return false;
+    }
+
+    private void callMethodShortcut(@NonNull Activity activity) {
+        for (MethodShortcuts<? extends Activity> methodShortcutsObject : methodShortcutsObjects) {
+            if (methodShortcutsObject.getActivityClass() == activity.getClass()) {
+                methodShortcutsObject.callMethodShortcut(activity, activity.getIntent().getStringExtra(EXTRA_METHOD));
+                break;
             }
         }
+    }
+
+    private boolean isDebuggable(@NonNull Context context) {
+        return (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
     }
 }

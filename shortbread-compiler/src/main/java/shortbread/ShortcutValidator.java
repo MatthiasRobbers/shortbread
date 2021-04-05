@@ -28,9 +28,10 @@ class ShortcutValidator {
                 return false;
             }
         } else if (element.getKind() == ElementKind.METHOD) {
-            if (!methodIsPublic()
-                    || !methodIsInActivity()
-                    || !methodHasNoParameters()) {
+            if (!methodIsInActivity()
+                    || methodIsAbstract()
+                    || methodIsPrivate()
+                    || methodHasParameters()) {
                 return false;
             }
         }
@@ -61,22 +62,31 @@ class ShortcutValidator {
         return false;
     }
 
-    private boolean methodIsPublic() {
-        if (element.getModifiers().contains(Modifier.PUBLIC)) {
+    private boolean methodIsAbstract() {
+        if (element.getModifiers().contains(Modifier.ABSTRACT)) {
+            error(element, "Methods annotated with @%s must not be abstract", Shortcut.class.getSimpleName());
             return true;
         }
 
-        error(element, "Methods annotated with @%s must be public", Shortcut.class.getSimpleName());
         return false;
     }
 
-    private boolean methodHasNoParameters() {
-        final ExecutableElement executableElement = (ExecutableElement) element;
-        if (executableElement.getParameters().size() == 0) {
+    private boolean methodIsPrivate() {
+        if (element.getModifiers().contains(Modifier.PRIVATE)) {
+            error(element, "Methods annotated with @%s must not be private", Shortcut.class.getSimpleName());
             return true;
         }
 
-        error(element, "Methods annotated with @%s can't have parameters", Shortcut.class.getSimpleName());
+        return false;
+    }
+
+    private boolean methodHasParameters() {
+        final ExecutableElement executableElement = (ExecutableElement) element;
+        if (executableElement.getParameters().size() > 0) {
+            error(element, "Methods annotated with @%s can't have parameters", Shortcut.class.getSimpleName());
+            return true;
+        }
+
         return false;
     }
 

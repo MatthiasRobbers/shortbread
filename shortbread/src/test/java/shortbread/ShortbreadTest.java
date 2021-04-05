@@ -1,12 +1,19 @@
 package shortbread;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
+import android.os.Build;
+
+import com.example.TestMethodShortcutActivity;
+import com.example.TestMethodShortcutActivity_Shortcuts;
+import com.example.TestShortcutActivity_Shortcuts;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,11 +25,14 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
-import java.util.List;
+import java.util.Arrays;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -35,22 +45,41 @@ public class ShortbreadTest {
     @Mock
     private Context context;
     @Mock
-    private Activity activity;
-    @Mock
     private Application application;
+    @Mock
+    private PackageManager packageManager;
+    @Mock
+    private PackageInfo packageInfo;
+    @Mock
+    private ActivityInfo shortcutActivityInfo;
+    @Mock
+    private ActivityInfo methodShortcutActivityInfo;
     @Mock
     private ShortcutManager shortcutManager;
     @Mock
     private Intent intent;
     @Captor
     ArgumentCaptor<Application.ActivityLifecycleCallbacks> lifecycleCallbacksCaptor;
+    private final TestMethodShortcutActivity activity = new TestMethodShortcutActivity();
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
         when(context.getApplicationContext()).thenReturn(application);
+        when(context.getPackageName()).thenReturn("com.example");
+        when(application.getPackageName()).thenReturn("com.example");
+        when(application.getPackageManager()).thenReturn(packageManager);
+        when(packageManager.getPackageInfo(anyString(), anyInt())).thenReturn(packageInfo);
         when(application.getSystemService(ShortcutManager.class)).thenReturn(shortcutManager);
-        when(activity.getIntent()).thenReturn(intent);
+
+        shortcutActivityInfo.name = "com.example.TestShortcutActivity";
+        methodShortcutActivityInfo.name = "com.example.TestMethodShortcutActivity";
+        packageInfo.activities = new ActivityInfo[]{shortcutActivityInfo, methodShortcutActivityInfo};
+        activity.setIntent(intent);
+
+        if (Build.VERSION.SDK_INT > 24) {
+            TestShortcutActivity_Shortcuts.shortcutInfos.add(new ShortcutInfo.Builder(context, "ID").build());
+        }
     }
 
     @Test
@@ -69,27 +98,29 @@ public class ShortbreadTest {
 
     @Test
     public void registersActivityLifecycleCallbacks() {
+        packageInfo.activities = new ActivityInfo[]{shortcutActivityInfo};
+
+        new Shortbread(context);
+        verify(application, times(0)).registerActivityLifecycleCallbacks(any(Application.ActivityLifecycleCallbacks.class));
+
+        packageInfo.activities = new ActivityInfo[]{shortcutActivityInfo, methodShortcutActivityInfo};
+
         new Shortbread(context);
         verify(application).registerActivityLifecycleCallbacks(any(Application.ActivityLifecycleCallbacks.class));
     }
 
     @Test
-    public void setsEnabledShortcuts() {
-        final List<ShortcutInfo> enabledShortcuts = ShortbreadGenerated.createShortcuts(context).get(0);
-
+    public void setsShortcuts() {
         new Shortbread(context);
-        verify(shortcutManager).setDynamicShortcuts(enabledShortcuts);
+        verify(shortcutManager).setDynamicShortcuts(TestShortcutActivity_Shortcuts.shortcutInfos);
     }
 
     @Test
     public void setsDisabledShortcuts() {
-        final List<ShortcutInfo> disabledShortcuts = ShortbreadGenerated.createShortcuts(activity).get(1);
+        TestShortcutActivity_Shortcuts.disabledShortcutIds.addAll(Arrays.asList("id1", "id2"));
 
         new Shortbread(context);
-        @SuppressWarnings("rawtypes") ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
-        //noinspection unchecked
-        verify(shortcutManager).disableShortcuts(captor.capture());
-        assertEquals(disabledShortcuts.size(), captor.getValue().size());
+        verify(shortcutManager).disableShortcuts(TestShortcutActivity_Shortcuts.disabledShortcutIds);
     }
 
     @Test
@@ -97,16 +128,16 @@ public class ShortbreadTest {
         when(intent.hasExtra("shortbread_method")).thenReturn(false);
 
         new Shortbread(context);
-        ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut = null;
+        TestMethodShortcutActivity_Shortcuts.activityThatWasPassedToCallMethodShortcut = null;
 
         verify(application).registerActivityLifecycleCallbacks(lifecycleCallbacksCaptor.capture());
         Application.ActivityLifecycleCallbacks lifecycleCallbacks = lifecycleCallbacksCaptor.getValue();
 
         lifecycleCallbacks.onActivityCreated(activity, null);
-        assertNull(ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut);
+        assertNull(TestMethodShortcutActivity_Shortcuts.activityThatWasPassedToCallMethodShortcut);
 
         lifecycleCallbacks.onActivityStarted(activity);
-        assertNull(ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut);
+        assertNull(TestMethodShortcutActivity_Shortcuts.activityThatWasPassedToCallMethodShortcut);
     }
 
     @Test
@@ -114,19 +145,19 @@ public class ShortbreadTest {
         when(intent.hasExtra("shortbread_method")).thenReturn(true);
 
         new Shortbread(context);
-        ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut = null;
+        TestMethodShortcutActivity_Shortcuts.activityThatWasPassedToCallMethodShortcut = null;
 
         verify(application).registerActivityLifecycleCallbacks(lifecycleCallbacksCaptor.capture());
         Application.ActivityLifecycleCallbacks lifecycleCallbacks = lifecycleCallbacksCaptor.getValue();
 
         lifecycleCallbacks.onActivityCreated(activity, null);
-        assertNull(ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut);
+        assertNull(TestMethodShortcutActivity_Shortcuts.activityThatWasPassedToCallMethodShortcut);
 
         lifecycleCallbacks.onActivityStarted(activity);
-        assertEquals(activity, ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut);
+        assertEquals(activity, TestMethodShortcutActivity_Shortcuts.activityThatWasPassedToCallMethodShortcut);
 
-        ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut = null;
+        TestMethodShortcutActivity_Shortcuts.activityThatWasPassedToCallMethodShortcut = null;
         lifecycleCallbacks.onActivityStarted(activity);
-        assertNull(ShortbreadGenerated.activityThatWasPassedToCallMethodShortcut);
+        assertNull(TestMethodShortcutActivity_Shortcuts.activityThatWasPassedToCallMethodShortcut);
     }
 }

@@ -4,10 +4,10 @@ import android.app.Activity;
 
 import shortbread.Shortcut;
 
-public class NoPublicMethod extends Activity {
+public class PrivateMethod extends Activity {
 
     @Shortcut(id = "ID")
-    void startActivity() {
+    private void startActivity() {
 
     }
 }

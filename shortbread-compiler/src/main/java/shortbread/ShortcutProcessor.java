@@ -8,14 +8,17 @@ import com.sun.tools.javac.tree.JCTree;
 
 import net.ltgt.gradle.incap.IncrementalAnnotationProcessor;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -25,22 +28,27 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 
-import static net.ltgt.gradle.incap.IncrementalAnnotationProcessorType.AGGREGATING;
+import static net.ltgt.gradle.incap.IncrementalAnnotationProcessorType.ISOLATING;
 
 @AutoService(Processor.class)
-@IncrementalAnnotationProcessor(AGGREGATING)
+@IncrementalAnnotationProcessor(ISOLATING)
 @SupportedAnnotationTypes({"shortbread.Shortcut"})
 public class ShortcutProcessor extends AbstractProcessor {
 
     private boolean processed;
     private Trees trees;
     private final RScanner rScanner = new RScanner();
+    private Filer filer;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
+
+        filer = processingEnv.getFiler();
 
         try {
             trees = Trees.instance(processingEnv);
@@ -68,8 +76,9 @@ public class ShortcutProcessor extends AbstractProcessor {
             processed = true;
         }
 
-        List<ShortcutAnnotatedElement<? extends Element>> annotatedElements = new ArrayList<>();
         ShortcutValidator validator = new ShortcutValidator(processingEnv.getMessager());
+        CodeGenerator codeGenerator = new CodeGenerator();
+        Map<TypeElement, List<ShortcutAnnotatedElement<? extends Element>>> classToShortcuts = new HashMap<>();
 
         for (final Element element : roundEnvironment.getElementsAnnotatedWith(Shortcut.class)) {
             if (!validator.validate(element)) {
@@ -78,14 +87,31 @@ public class ShortcutProcessor extends AbstractProcessor {
 
             if (element.getKind() == ElementKind.CLASS) {
                 final TypeElement typeElement = (TypeElement) element;
-                annotatedElements.add(new ShortcutAnnotatedClass(typeElement, getShortcutWithIds(element)));
+                ShortcutAnnotatedClass shortcutAnnotatedClass = new ShortcutAnnotatedClass(typeElement, getShortcutWithIds(element));
+                if (!classToShortcuts.containsKey(typeElement)) {
+                    classToShortcuts.put(typeElement, new ArrayList<>());
+                }
+                classToShortcuts.get(typeElement).add(shortcutAnnotatedClass);
             } else if (element.getKind() == ElementKind.METHOD) {
                 final ExecutableElement executableElement = (ExecutableElement) element;
-                annotatedElements.add(new ShortcutAnnotatedMethod(executableElement, getShortcutWithIds(element)));
+                ShortcutAnnotatedMethod shortcutAnnotatedMethod = new ShortcutAnnotatedMethod(executableElement, getShortcutWithIds(element));
+                TypeElement enclosingElement = (TypeElement) executableElement.getEnclosingElement();
+                if (!classToShortcuts.containsKey(enclosingElement)) {
+                    classToShortcuts.put(enclosingElement, new ArrayList<>());
+                }
+                classToShortcuts.get(enclosingElement).add(shortcutAnnotatedMethod);
             }
         }
 
-        new CodeGenerator(processingEnv.getFiler(), annotatedElements).generate();
+        for (Map.Entry<TypeElement, List<ShortcutAnnotatedElement<? extends Element>>> entry : classToShortcuts.entrySet()) {
+            PackageElement packageElement = processingEnv.getElementUtils().getPackageOf(entry.getKey());
+            String packageName = packageElement.getQualifiedName().toString();
+            try {
+                codeGenerator.generate(packageName, entry.getKey(), entry.getValue()).writeTo(filer);
+            } catch (IOException e) {
+                error(entry.getKey(), "Unable to generate shortcut for type %s: %s", entry.getKey(), e.getMessage());
+            }
+        }
         return false;
     }
 
@@ -96,6 +122,7 @@ public class ShortcutProcessor extends AbstractProcessor {
 
     private ShortcutData getShortcutWithIds(Element element) {
         Shortcut shortcut = element.getAnnotation(Shortcut.class);
+
         Map<Integer, Id> resourceIds = new LinkedHashMap<>();
         JCTree tree = (JCTree) trees.getTree(element, getMirror(element));
         if (tree != null) { // tree can be null if the references are compiled types and not source
@@ -116,4 +143,13 @@ public class ShortcutProcessor extends AbstractProcessor {
         }
         return null;
     }
+
+    private void error(Element element, String message, Object... args) {
+        if (args.length > 0) {
+            message = String.format(message, args);
+        }
+
+        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message, element);
+    }
+
 }

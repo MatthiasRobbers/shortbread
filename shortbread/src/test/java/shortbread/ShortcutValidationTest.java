@@ -25,12 +25,21 @@ public class ShortcutValidationTest {
     }
 
     @Test
-    public void noPublicMethodActivity() {
-        JavaFileObject source = JavaFileObjectsPatched.forResource("validation/NoPublicMethod.java");
+    public void abstractMethod() {
+        JavaFileObject source = JavaFileObjectsPatched.forResource("validation/AbstractMethod.java");
         assertAbout(javaSource()).that(source)
                 .processedWith(new ShortcutProcessor())
                 .failsToCompile()
-                .withErrorContaining("Methods annotated with @Shortcut must be public");
+                .withErrorContaining("Methods annotated with @Shortcut must not be abstract");
+    }
+
+    @Test
+    public void privateMethod() {
+        JavaFileObject source = JavaFileObjectsPatched.forResource("validation/PrivateMethod.java");
+        assertAbout(javaSource()).that(source)
+                .processedWith(new ShortcutProcessor())
+                .failsToCompile()
+                .withErrorContaining("Methods annotated with @Shortcut must not be private");
     }
 
     @Test
