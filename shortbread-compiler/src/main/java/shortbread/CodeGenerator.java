@@ -38,16 +38,16 @@ class CodeGenerator {
     private final ClassName methodShortcuts = ClassName.get("shortbread.internal", "MethodShortcuts");
     private final ClassName shortcutUtils = ClassName.get("shortbread.internal", "ShortcutUtils");
 
-    private TypeElement typeElement;
+    private TypeElement activityElement;
     private List<ShortcutAnnotatedElement<? extends Element>> annotatedElements;
 
     JavaFile generate(final String packageName,
-                      final TypeElement typeElement,
+                      final TypeElement activityElement,
                       final List<ShortcutAnnotatedElement<? extends Element>> annotatedElements) {
-        this.typeElement = typeElement;
+        this.activityElement = activityElement;
         this.annotatedElements = annotatedElements;
 
-        TypeSpec.Builder shortcutsClassBuilder = TypeSpec.classBuilder(typeElement.getSimpleName() + "_Shortcuts")
+        TypeSpec.Builder shortcutsClassBuilder = TypeSpec.classBuilder(activityElement.getSimpleName() + "_Shortcuts")
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .addSuperinterface(shortcuts)
                 .addMethod(getShortcuts())
@@ -55,7 +55,7 @@ class CodeGenerator {
 
         if (containsMethodShortcuts()) {
             shortcutsClassBuilder
-                    .addSuperinterface(ParameterizedTypeName.get(methodShortcuts, ClassName.get(typeElement)))
+                    .addSuperinterface(ParameterizedTypeName.get(methodShortcuts, ClassName.get(activityElement)))
                     .addMethod(getActivityClass())
                     .addMethod(callMethodShortcut());
         }
@@ -252,8 +252,8 @@ class CodeGenerator {
         return MethodSpec.methodBuilder("getActivityClass")
                 .addAnnotation(Override.class)
                 .addModifiers(Modifier.PUBLIC)
-                .returns(ParameterizedTypeName.get(ClassName.get(Class.class), ClassName.get(typeElement)))
-                .addStatement("return $T.class", ClassName.get(typeElement))
+                .returns(ParameterizedTypeName.get(ClassName.get(Class.class), ClassName.get(activityElement)))
+                .addStatement("return $T.class", ClassName.get(activityElement))
                 .build();
     }
 
@@ -268,7 +268,7 @@ class CodeGenerator {
             if (annotatedElement instanceof ShortcutAnnotatedMethod) {
                 String methodName = ((ShortcutAnnotatedMethod) annotatedElement).getMethodName();
                 methodBuilder.beginControlFlow("if ($S.equals(methodName))", methodName)
-                        .addStatement("(($T) activity).$L()", ClassName.get(typeElement), methodName)
+                        .addStatement("(($T) activity).$L()", ClassName.get(activityElement), methodName)
                         .endControlFlow();
             }
         }

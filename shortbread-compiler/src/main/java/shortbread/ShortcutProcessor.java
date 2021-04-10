@@ -3,6 +3,7 @@ package shortbread;
 import androidx.annotation.Nullable;
 
 import com.google.auto.service.AutoService;
+import com.squareup.javapoet.JavaFile;
 import com.sun.source.util.Trees;
 import com.sun.tools.javac.tree.JCTree;
 
@@ -18,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
@@ -42,13 +42,10 @@ public class ShortcutProcessor extends AbstractProcessor {
     private boolean processed;
     private Trees trees;
     private final RScanner rScanner = new RScanner();
-    private Filer filer;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-
-        filer = processingEnv.getFiler();
 
         try {
             trees = Trees.instance(processingEnv);
@@ -76,12 +73,13 @@ public class ShortcutProcessor extends AbstractProcessor {
             processed = true;
         }
 
-        ShortcutValidator validator = new ShortcutValidator(processingEnv.getMessager());
+        ShortcutValidator validator = new ShortcutValidator();
         CodeGenerator codeGenerator = new CodeGenerator();
         Map<TypeElement, List<ShortcutAnnotatedElement<? extends Element>>> classToShortcuts = new HashMap<>();
 
         for (final Element element : roundEnvironment.getElementsAnnotatedWith(Shortcut.class)) {
             if (!validator.validate(element)) {
+                error(validator.error, element);
                 return true;
             }
 
@@ -107,9 +105,10 @@ public class ShortcutProcessor extends AbstractProcessor {
             PackageElement packageElement = processingEnv.getElementUtils().getPackageOf(entry.getKey());
             String packageName = packageElement.getQualifiedName().toString();
             try {
-                codeGenerator.generate(packageName, entry.getKey(), entry.getValue()).writeTo(filer);
+                JavaFile shortcutsClass = codeGenerator.generate(packageName, entry.getKey(), entry.getValue());
+                shortcutsClass.writeTo(processingEnv.getFiler());
             } catch (IOException e) {
-                error(entry.getKey(), "Unable to generate shortcut for type %s: %s", entry.getKey(), e.getMessage());
+                error("Unable to generate shortcuts for type " + entry.getKey() + ": " + e.getMessage(), entry.getKey());
             }
         }
         return false;
@@ -144,12 +143,7 @@ public class ShortcutProcessor extends AbstractProcessor {
         return null;
     }
 
-    private void error(Element element, String message, Object... args) {
-        if (args.length > 0) {
-            message = String.format(message, args);
-        }
-
+    private void error(String message, Element element) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, message, element);
     }
-
 }

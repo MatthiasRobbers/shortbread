@@ -1,11 +1,13 @@
 Change Log
 ==========
 
-Version 1.4.0 *(2021-0X-XX)*
+Version 1.4.0 *(2021-04-10)*
 ----------------------------
-* Improve: Shortbread is now an _isolating_ annotation processor, which improves the performance of incremental annotation proccessing.
-Before, the processor was of type _aggregating_.
-* Improve: Shorcut methods/functions don't have to be `public` anymore. Any visibility higher than `private` is enough.
+* Improve: Shortbread is now an _isolating_ annotation processor, which improves the performance of incremental annotation processing.
+Before, the processor was of type _aggregating_ and it would generate a single class `ShortbreadGenerated`. Now it generates one
+class for each activity that contains shortcuts, e.g. `MoviesActivity_Shortcuts`. The generated classes are still only used by the
+library itself, the consumer does not interact with them.
+* Improve: Shortcut methods/functions don't have to be `public` anymore. Any visibility higher than `private` is enough.
 * Fix: When using `R2`, resource values sometimes were not properly read when the incremental annotation processing was incremental
 
 
