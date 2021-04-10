@@ -1,4 +1,4 @@
-package com.example.shortbread.books;
+package com.example.books;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -15,12 +15,14 @@ public class BooksActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_books);
+        setContentView(R.layout.activity_sample);
+
+        ((TextView) findViewById(R.id.text)).setText("Books");
     }
 
-    @Shortcut(id = "favorite_books", icon = R2.drawable.ic_shortcut_favorite, shortLabelRes = R2.string.label_books_method,
-            rank = 2, disabledMessage = "You have no favorite books")
-    public void showFavoriteBooks() {
+    @Shortcut(id = "favorite_books", enabled = false, icon = R2.drawable.ic_shortcut_favorite,
+            shortLabelRes = R2.string.label_books_method, rank = 2, disabledMessage = "You have no favorite books")
+    void showFavoriteBooks() {
         ((TextView) findViewById(R.id.text)).setText("Favorite books");
     }
 }

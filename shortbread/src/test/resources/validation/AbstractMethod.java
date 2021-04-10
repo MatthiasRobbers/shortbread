@@ -4,10 +4,10 @@ import android.app.Activity;
 
 import shortbread.Shortcut;
 
-public class NoActivityMethod {
+public class AbstractMethod extends Activity {
 
     @Shortcut(id = "ID")
-    void startActivity() {
+    abstract void startActivity() {
 
     }
 }

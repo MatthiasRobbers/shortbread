@@ -1,6 +1,5 @@
 package shortbread;
 
-import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
@@ -9,28 +8,27 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.tools.Diagnostic;
 
 class ShortcutValidator {
 
-    private final Messager messager;
     private Element element;
-
-    ShortcutValidator(Messager messager) {
-        this.messager = messager;
-    }
+    private Shortcut shortcut;
+    String error;
 
     boolean validate(Element element) {
         this.element = element;
+        shortcut = element.getAnnotation(Shortcut.class);
+        error = null;
 
         if (element.getKind() == ElementKind.CLASS) {
             if (!classIsActivity()) {
                 return false;
             }
         } else if (element.getKind() == ElementKind.METHOD) {
-            if (!methodIsPublic()
-                    || !methodIsInActivity()
-                    || !methodHasNoParameters()) {
+            if (!methodIsInActivity()
+                    || methodIsAbstract()
+                    || methodIsPrivate()
+                    || methodHasParameters()) {
                 return false;
             }
         }
@@ -47,7 +45,7 @@ class ShortcutValidator {
             return true;
         }
 
-        error(element, "Only activities can be annotated with @%s", Shortcut.class.getSimpleName());
+        error = "Only activities can be annotated with @" + Shortcut.class.getSimpleName();
         return false;
     }
 
@@ -57,32 +55,39 @@ class ShortcutValidator {
             return true;
         }
 
-        error(element, "Methods annotated with @%s must be part of activities", Shortcut.class.getSimpleName());
+        error = "Methods annotated with @" + Shortcut.class.getSimpleName() + " must be part of activities";
         return false;
     }
 
-    private boolean methodIsPublic() {
-        if (element.getModifiers().contains(Modifier.PUBLIC)) {
+    private boolean methodIsAbstract() {
+        if (element.getModifiers().contains(Modifier.ABSTRACT)) {
+            error = "Methods annotated with @" + Shortcut.class.getSimpleName() + " must not be abstract";
             return true;
         }
 
-        error(element, "Methods annotated with @%s must be public", Shortcut.class.getSimpleName());
         return false;
     }
 
-    private boolean methodHasNoParameters() {
+    private boolean methodIsPrivate() {
+        if (element.getModifiers().contains(Modifier.PRIVATE)) {
+            error = "Methods annotated with @" + Shortcut.class.getSimpleName() + " must not be private";
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean methodHasParameters() {
         final ExecutableElement executableElement = (ExecutableElement) element;
-        if (executableElement.getParameters().size() == 0) {
+        if (executableElement.getParameters().size() > 0) {
+            error = "Methods annotated with @" + Shortcut.class.getSimpleName() + " can't have parameters";
             return true;
         }
 
-        error(element, "Methods annotated with @%s can't have parameters", Shortcut.class.getSimpleName());
         return false;
     }
 
     private boolean noMultipleShortLabels() {
-        Shortcut shortcut = element.getAnnotation(Shortcut.class);
-
         int counter = 0;
         if (shortcut.shortLabelRes() != 0) {
             counter++;
@@ -97,13 +102,11 @@ class ShortcutValidator {
             return true;
         }
 
-        error(element, "Only one of shortLabelRes, shortLabelResName and shortLabel can be set");
+        error = "Only one of shortLabelRes, shortLabelResName and shortLabel can be set";
         return false;
     }
 
     private boolean noMultipleLongLabels() {
-        Shortcut shortcut = element.getAnnotation(Shortcut.class);
-
         int counter = 0;
         if (shortcut.longLabelRes() != 0) {
             counter++;
@@ -118,13 +121,11 @@ class ShortcutValidator {
             return true;
         }
 
-        error(element, "Only one of longLabelRes, longLabelResName and longLabel can be set");
+        error = "Only one of longLabelRes, longLabelResName and longLabel can be set";
         return false;
     }
 
     private boolean noMultipleDisabledMessages() {
-        Shortcut shortcut = element.getAnnotation(Shortcut.class);
-
         int counter = 0;
         if (shortcut.disabledMessageRes() != 0) {
             counter++;
@@ -139,13 +140,11 @@ class ShortcutValidator {
             return true;
         }
 
-        error(element, "Only one of disabledMessageRes, disabledMessageResName and disabledMessage can be set");
+        error = "Only one of disabledMessageRes, disabledMessageResName and disabledMessage can be set";
         return false;
     }
 
     private boolean noMultipleIcons() {
-        Shortcut shortcut = element.getAnnotation(Shortcut.class);
-
         int counter = 0;
         if (shortcut.icon() != 0) {
             counter++;
@@ -157,16 +156,8 @@ class ShortcutValidator {
             return true;
         }
 
-        error(element, "Only one of icon and iconResName can be set");
+        error = "Only one of icon and iconResName can be set";
         return false;
-    }
-
-    private void error(Element element, String message, Object... args) {
-        if (args.length > 0) {
-            message = String.format(message, args);
-        }
-
-        messager.printMessage(Diagnostic.Kind.ERROR, message, element);
     }
 
     private boolean isSubtypeOfActivity(TypeMirror typeMirror) {

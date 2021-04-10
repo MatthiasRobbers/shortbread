@@ -1,13 +1,13 @@
-package com.example.shortbread.movies;
+package com.example.movies;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.example.shortbread.MainActivity;
+import com.example.MainActivity;
+import com.example.books.BooksActivity;
 import com.example.shortbread.R;
 import com.example.shortbread.R2;
-import com.example.shortbread.books.BooksActivity;
 
 import shortbread.Shortcut;
 
@@ -18,11 +18,13 @@ public class MoviesActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movies);
+        setContentView(R.layout.activity_sample);
+
+        ((TextView) findViewById(R.id.text)).setText("Movies");
     }
 
     @Shortcut(id = "add_movie", icon = R2.drawable.ic_shortcut_add, shortLabelRes = R2.string.label_movies_method, rank = 4)
-    public void addMovie() {
+    void addMovie() {
         ((TextView) findViewById(R.id.text)).setText("Add movie");
     }
 }
