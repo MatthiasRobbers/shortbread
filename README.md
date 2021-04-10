@@ -92,8 +92,8 @@ Shortbread is available on `mavenCentral()`.
 apply plugin: 'kotlin-kapt'
 
 dependencies {
-    implementation 'com.github.matthiasrobbers:shortbread:1.3.0'
-    kapt 'com.github.matthiasrobbers:shortbread-compiler:1.3.0'
+    implementation 'com.github.matthiasrobbers:shortbread:1.4.0'
+    kapt 'com.github.matthiasrobbers:shortbread-compiler:1.4.0'
 }
 ```
 </details>
@@ -102,8 +102,8 @@ dependencies {
 
 ```groovy
 dependencies {
-    implementation 'com.github.matthiasrobbers:shortbread:1.3.0'
-    annotationProcessor 'com.github.matthiasrobbers:shortbread-compiler:1.3.0'
+    implementation 'com.github.matthiasrobbers:shortbread:1.4.0'
+    annotationProcessor 'com.github.matthiasrobbers:shortbread-compiler:1.4.0'
 }
 ```
 </details>
@@ -123,7 +123,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.github.matthiasrobbers:shortbread-gradle-plugin:1.3.0'
+        classpath 'com.github.matthiasrobbers:shortbread-gradle-plugin:1.4.0'
     }
 }
 ```

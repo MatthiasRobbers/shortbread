@@ -9,6 +9,7 @@ class for each activity that contains shortcuts, e.g. `MoviesActivity_Shortcuts`
 library itself, the consumer does not interact with them.
 * Improve: Shortcut methods/functions don't have to be `public` anymore. Any visibility higher than `private` is enough.
 * Fix: When using `R2`, resource values sometimes were not properly read when the incremental annotation processing was incremental
+* New: The module `:sample-library` shows how to use Shortbread in a library module
 
 
 Version 1.3.0 *(2021-03-31)*
